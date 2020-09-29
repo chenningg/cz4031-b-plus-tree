@@ -1,6 +1,6 @@
 #include <iostream>
 
-int add(int x, int y); // needed so main.cpp knows that add() is a function declared elsewhere
+#include "bplustree.h"
 
 int main()
 {
