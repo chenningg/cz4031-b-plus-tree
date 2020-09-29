@@ -13,7 +13,7 @@ B+ tree implementation for NTU's CZ4031 course of Database Systems Principles.
 
 ## Setup
 
-- Ensure that you have a C++ compiler (we suggest [mingw](https://sourceforge.net/projects/mingw-w64/))
+- Ensure that you have a C++ compiler (we suggest [mingw](https://sourceforge.net/projects/mingw-w64/)).
 - Setup your environment and ensure all C++ files are included in compilation:
 
 ```
