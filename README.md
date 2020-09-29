@@ -14,14 +14,15 @@ B+ tree implementation for NTU's CZ4031 course of Database Systems Principles.
 ## Setup
 
 - Ensure that you have a C++ compiler (we suggest [mingw](https://sourceforge.net/projects/mingw-w64/)).
-- Setup your environment and ensure all C++ files are included in compilation:
+- Setup your environment and ensure all C++ files are included in compilation.
+  For example, if we use the code runner extension for VS Code:
 
-```
-{
-  "code-runner.executorMap": {
-    "cpp": "cd $dir && g++ *.cpp -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+  ```
+  {
+    "code-runner.executorMap": {
+      "cpp": "cd $dir && g++ *.cpp -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
+    }
   }
-}
-```
+  ```
 
 - `cd` to main.cpp under `src` and run.
