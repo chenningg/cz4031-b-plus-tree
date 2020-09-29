@@ -8,8 +8,8 @@ B+ tree implementation for NTU's CZ4031 course of Database Systems Principles.
 - B+ tree's memory dynamically allocated on creation.
 - Each B+ tree node is the size of one block.
 - Leaf nodes are linked in a doubly linked list.
-- Leaf nodes point to the datastore (data is stored in main memory)
-- Datastore is statically allocated as a memory pool of 500MB.
+- Leaf nodes point to the database (data is stored in main memory)
+- Database is statically allocated as a memory pool of 500MB.
 
 ## Setup
 

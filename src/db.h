@@ -1,3 +1,6 @@
+#ifndef DB_H
+#define DB_H
+
 #include <string>
 
 struct Movie
@@ -6,3 +9,5 @@ struct Movie
   float averageRating;
   int numVotes;
 };
+
+#endif
