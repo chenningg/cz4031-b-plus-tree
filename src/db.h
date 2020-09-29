@@ -1,11 +1,9 @@
 #ifndef DB_H
 #define DB_H
 
-#include <string>
-
 struct Movie
 {
-  std::string tconst;
+  char tconst[9];
   float averageRating;
   int numVotes;
 };
