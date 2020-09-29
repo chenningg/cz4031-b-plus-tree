@@ -14,13 +14,27 @@ B+ tree implementation for NTU's CZ4031 course of Database Systems Principles.
 ## Setup
 
 - Ensure that you have a C++ compiler (we suggest [mingw](https://sourceforge.net/projects/mingw-w64/)).
-- Setup your environment and ensure all C++ files are included in compilation. For example, if we use the [code runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) extension for VS Code, we would add this in `settings.json`:
+- Setup your environment and ensure all C++ files are included in compilation.
+
+  For example, if we use the [code runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) extension for VSCode, we would add this in `settings.json`:
 
   ```
   {
     "code-runner.executorMap": {
       "cpp": "cd $dir && g++ *.cpp -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
     }
+  }
+  ```
+
+  If we were running C++ using VSCode directly, we would define the `tasks.json` file with corresponding `args` to include all C++ files:
+
+  ```
+  {
+    "tasks": [
+      {
+        "args": ["-g", "${workspaceFolder}\\*.cpp", "-o", "${fileDirname}\\${fileBasenameNoExtension}.exe"],
+      }
+    ]
   }
   ```
 
