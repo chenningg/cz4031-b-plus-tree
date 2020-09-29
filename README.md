@@ -1,14 +1,16 @@
 # B+ Tree
 
-B+ tree implementation for NTU's CZ4031 course of Database Systems Principles.
+B+ tree implementation using C++ for NTU's CZ4031 course of Database Systems Principles.
 
 ## Implementation details:
 
 - Block size is 100B each.
-- B+ tree's memory dynamically allocated on creation.
+- B+ tree's memory is dynamically allocated on creation.
 - Each B+ tree node is the size of one block.
+- Multiple records can fit into one node/block.
+- Records are of variable length (TBC).
 - Leaf nodes are linked in a doubly linked list.
-- Leaf nodes point to the database (data is stored in main memory)
+- Leaf nodes maintain pointers to the actual data (data is stored in main memory).
 - Database is statically allocated as a memory pool of 500MB.
 
 ## Setup
