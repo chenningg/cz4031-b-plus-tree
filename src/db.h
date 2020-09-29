@@ -18,17 +18,25 @@ public:
   // A block of fixed size (user defined below) that can fit more than one record
   struct Block
   {
-    std::size_t size;
+    std::vector<Record> records;
   };
 
   // Constructor
-  DB(){
+  DB();
 
-  };
+  // Methods
+  // Add new block
+  void addBlock();
+
+  // Remove block
+  void removeBlock();
+
+  // Destructor
+  ~DB();
 
 private:
-  // Stores all the blocks
-  std::vector<DB::Record> store;
+  // Stores all blocks
+  void *store;
 };
 
 #endif
