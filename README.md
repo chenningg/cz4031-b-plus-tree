@@ -2,13 +2,11 @@
 
 This is a B+ tree implementation using C++ for NTU's CZ4031 course of Database Systems Principles. The data given is a list of movies, with each record containing the movie ID, its average rating and the number of votes.
 
-<center>
 |  tconst   | averageRating | numVotes |
 | :-------: | :-----------: | :------: |
 | tt0000001 |      5.6      |   1645   |
 | tt0000002 |      6.1      |   198    |
 | tt0000003 |      6.5      |   1342   |
-</center>
 
 There are more than 9 million records in the data. Our goal is to build a B+ tree index on the average rating field, and query the data based on the index for efficient retrival.
 
