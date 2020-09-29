@@ -8,7 +8,7 @@ This is a B+ tree implementation using C++ for NTU's CZ4031 course of Database S
 | tt0000002 |      6.1      |   198    |
 | tt0000003 |      6.5      |   1342   |
 
-There are more than 9 million records in the data. Our goal is to build a B+ tree index on the average rating field, and query the data based on the index for efficient retrival.
+There are more than 9 million records in the data. Our goal is to build a B+ tree index on the average rating field, and query the data based on the index for efficient retrieval.
 
 ## Implementation details:
 
