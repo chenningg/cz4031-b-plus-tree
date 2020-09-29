@@ -5,6 +5,6 @@
 
 int main()
 {
-  std::cout << "The size of Movie is " << sizeof(Movie) << '\n';
+  std::cout << "The size of Movie is " << sizeof(DB::Record) << '\n';
   return 0;
 }
