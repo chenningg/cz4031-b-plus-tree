@@ -12,7 +12,7 @@ There are more than 9 million records in the data. Our goal is to build a B+ tre
 
 ## Implementation details:
 
-- Block size is 100B each.
+- Each block's size is 100B for the first implementation, and 500B for the second.
 - Each record (movie) has a fixed size of 40B (TBC).
 - Multiple records can be stored per block.
 - B+ tree's memory is dynamically allocated on creation.
