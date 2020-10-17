@@ -49,10 +49,16 @@ public:
     return blockSize;
   };
 
-  // Returns current size used in memory pool.
+  // Returns current size used in memory pool (total blocks size).
   std::size_t getSizeUsed() const
   {
     return sizeUsed;
+  }
+
+  // Returns actual size of all records stored in memory pool.
+  std::size_t getActualSizeUsed() const
+  {
+    return actualSizeUsed;
   }
 
   // Returns number of currently allocated blocks.
@@ -67,9 +73,10 @@ public:
 private:
   // =============== Data ================ //
 
-  std::size_t maxPoolSize; // Maximum size allowed for pool.
-  std::size_t blockSize;   // Size of each block in pool in bytes.
-  std::size_t sizeUsed;    // Current size used up for storage (estimate).
+  std::size_t maxPoolSize;    // Maximum size allowed for pool.
+  std::size_t blockSize;      // Size of each block in pool in bytes.
+  std::size_t sizeUsed;       // Current size used up for storage (total block size).
+  std::size_t actualSizeUsed; // Actual size used based on records stored in storage.
 
   int allocated; // Number of currently allocated blocks.
 

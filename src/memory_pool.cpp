@@ -12,6 +12,7 @@ MemoryPool::MemoryPool(std::size_t maxPoolSize, std::size_t blockSize)
   this->maxPoolSize = maxPoolSize;
   this->blockSize = blockSize;
   this->sizeUsed = 0;
+  this->actualSizeUsed = 0;
   this->allocated = 0;
 
   // Create pool of blocks
@@ -70,6 +71,9 @@ std::tuple<int, int> MemoryPool::allocate(Record record)
   pool[block].push_back(record);
   int offset = pool[block].size() - 1;
 
+  // Update actual size used
+  actualSizeUsed += sizeof(record);
+
   std::tuple<int, int> recordAddress(block, offset);
 
   return recordAddress;
@@ -82,10 +86,16 @@ bool MemoryPool::deallocate(int blockID, int offset)
     std::vector<Record> recordBlock = pool.at(blockID);
     recordBlock.erase(recordBlock.begin() + offset);
 
+    // Update actual size used
+    actualSizeUsed -= sizeof(Record);
+
     // If block is empty, just remove it
     if (recordBlock.size() < 1)
     {
       pool.erase(blockID);
+
+      // Update size used
+      sizeUsed -= blockSize;
     }
     return true;
   }

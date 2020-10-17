@@ -43,6 +43,7 @@ int main()
   }
 
   cout << "Current blocks used: " << db.getAllocated() << " blocks" << '\n';
-  cout << "Size used: " << db.getSizeUsed() << " bytes" << '\n';
+  cout << "Actual size used: " << db.getActualSizeUsed() << " bytes" << '\n';
+  cout << "Total size occupied: " << db.getSizeUsed() << " bytes" << '\n';
   return 0;
 }
