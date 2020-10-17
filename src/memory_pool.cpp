@@ -15,7 +15,7 @@ MemoryPool::MemoryPool(std::size_t maxPoolSize, std::size_t blockSize)
   this->actualSizeUsed = 0;
   this->allocated = 0;
 
-  // Create pool of blocks
+  // Create pool of blocks.
   std::unordered_map<int, std::vector<Record>> blocks;
 
   this->pool = blocks;
@@ -26,16 +26,16 @@ MemoryPool::MemoryPool(std::size_t maxPoolSize, std::size_t blockSize)
 
 bool MemoryPool::allocateBlock()
 {
-  // Allocate a new block and move free pointer to start of block.
+  // Only allocate a new block if we don't exceed maxPoolSize.
   if (sizeUsed + blockSize <= maxPoolSize)
   {
     std::vector<Record> newBlock;
 
-    // Assign new block with blockID
+    // Assign new block with blockID.
     pool[allocated] = newBlock;
 
-    // Updated variables
-    block = allocated;
+    // Update variables
+    block = allocated; // Set current blockID to maintain a reference to current block.
     allocated += 1;
     sizeUsed += blockSize;
 
@@ -57,7 +57,7 @@ std::tuple<int, int> MemoryPool::allocate(Record record)
     throw std::invalid_argument("Record size too large!");
   }
 
-  // If no free blocks, make a new block.
+  // If no free blocks, or record can't fit into current block, make a new block.
   if (allocated == 0 || pool[block].size() * sizeof(Record) + sizeof(record) > blockSize)
   {
     bool isSuccessful = allocateBlock();
@@ -67,11 +67,11 @@ std::tuple<int, int> MemoryPool::allocate(Record record)
     }
   }
 
-  // Add record to the block and save its address for indexing.
+  // Add record to the block and save its blockID (address) and offset for indexing.
   pool[block].push_back(record);
   int offset = pool[block].size() - 1;
 
-  // Update actual size used
+  // Update actual size used.
   actualSizeUsed += sizeof(record);
 
   std::tuple<int, int> recordAddress(block, offset);
@@ -83,18 +83,19 @@ bool MemoryPool::deallocate(int blockID, int offset)
 {
   try
   {
+    // Remove record from block.
     std::vector<Record> recordBlock = pool.at(blockID);
     recordBlock.erase(recordBlock.begin() + offset);
 
-    // Update actual size used
+    // Update actual size used.
     actualSizeUsed -= sizeof(Record);
 
-    // If block is empty, just remove it
+    // If block is empty, just remove it.
     if (recordBlock.size() < 1)
     {
       pool.erase(blockID);
 
-      // Update size used
+      // Update size used.
       sizeUsed -= blockSize;
     }
     return true;
@@ -108,6 +109,7 @@ bool MemoryPool::deallocate(int blockID, int offset)
 
 Record MemoryPool::read(int blockID, int offset) const
 {
+  // Retrieve record from blockID and offset provided.
   Record record = pool.at(blockID).at(offset);
   return record;
 }
