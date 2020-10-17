@@ -4,12 +4,17 @@
 #include <vector>
 
 // Defines a single movie record (read from data file).
-struct Movie
+struct Record
 {
   bool isDeleted;      // Flag denoting this record has been deleted.
   float averageRating; // Average rating of this movie.
   int numVotes;        // Number of votes of this movie.
   char tconst[10];     // ID of the movie.
+};
+
+struct Block
+{
+  bool isAccessed; // Whether this block has been accessed before.
 };
 
 class MemoryPool
@@ -27,13 +32,16 @@ public:
 
   // Allocates a new chunk to the memory pool.
   // Creates a new block if chunk is unable to fit in current free block.
-  unsigned char *allocate(Movie movie);
+  unsigned char *allocate(Record record);
 
   // Deallocates an existing block (Not implemented).
   void deallocateBlock();
 
   // Deallocates an existing chunk. Returns false if error.
-  bool deallocate(Movie *movie);
+  bool deallocate(Record *record);
+
+  // Access a record given a block address and offset
+  unsigned char *getRecord(Block *blockAddress, int offset);
 
   // Returns the size of the memory pool.
   std::size_t getPoolSize() const
@@ -75,8 +83,9 @@ private:
   std::size_t blockSize; // Size of each block in pool in bytes.
   std::size_t sizeUsed;  // Current size used up for storage.
 
-  int allocated; // Number of currently allocated blocks.
-  int available; // Number of blocks available to allocate.
+  int allocated;      // Number of currently allocated blocks.
+  int available;      // Number of blocks available to allocate.
+  int blocksAccessed; // Number of blocks accessed while getting records.
 
   unsigned char *pool;  // Pointer to start of memory pool.
   unsigned char *block; // Pointer to start of current block.

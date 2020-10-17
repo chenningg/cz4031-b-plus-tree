@@ -10,7 +10,7 @@
 //   std::cout << "Block size: " << db.getBlockSize() << " bytes" << '\n';
 
 //   Movie test = {false, 5.6, 12312, "tt0000001"};
-  // Movie test2 = {false, 7.0, 6246472, "tt0000002"};
+// Movie test2 = {false, 7.0, 6246472, "tt0000002"};
 //   std::cout << "Size of a record: " << sizeof(test) << " bytes" << '\n';
 
 //   std::cout << "Current blocks available: " << db.getAvailable() << " blocks" << '\n';
@@ -29,10 +29,10 @@
 //   return 0;
 // }
 
-
 #include <fstream>
-#include <string>
 #include <sstream>
+#include <stdio.h>
+#include <string.h>
 
 using namespace std;
 
@@ -43,24 +43,26 @@ int main()
   cout << "Pool size: " << db.getPoolSize() << " bytes" << '\n';
   cout << "Block size: " << db.getBlockSize() << " bytes" << '\n';
   std::ifstream file("../data/testdata.tsv");
-  if (file.is_open()) {
+  if (file.is_open())
+  {
     std::string line;
     int recordNum = 0;
-    while (std::getline(file, line)) {
-        float averageRating;
-        int numVotes;
-        char tconst;
-        Movie temp={false,averageRating,numVotes,tconst};
-        stringstream linestream(line);
-        string data;
-        strcpy(temp.tconst,line.substr(0,line.find("\t")).c_str());
-        std::getline(linestream, data, '\t');
-        linestream>>temp.averageRating>>temp.numVotes;
-        cout <<"Reading line " <<recordNum +1<<" of data"<<'\n';
-        cout << "Size of a record: " << sizeof(temp) << " bytes" << '\n';
-        cout << "Inserted record "<< recordNum +1 <<" at: " << reinterpret_cast<void *>(db.allocate(temp)) << '\n';
-        recordNum +=1;
-        // cout<<temp.tconst<<","<<temp.averageRating<<","<<temp.numVotes<<'\n';
+    while (std::getline(file, line))
+    {
+      float averageRating;
+      int numVotes;
+      char tconst;
+      Record temp = {false, averageRating, numVotes, tconst};
+      stringstream linestream(line);
+      string data;
+      strcpy(temp.tconst, line.substr(0, line.find("\t")).c_str());
+      std::getline(linestream, data, '\t');
+      linestream >> temp.averageRating >> temp.numVotes;
+      cout << "Reading line " << recordNum + 1 << " of data" << '\n';
+      cout << "Size of a record: " << sizeof(temp) << " bytes" << '\n';
+      cout << "Inserted record " << recordNum + 1 << " at: " << reinterpret_cast<void *>(db.allocate(temp)) << '\n';
+      recordNum += 1;
+      // cout<<temp.tconst<<","<<temp.averageRating<<","<<temp.numVotes<<'\n';
     }
     file.close();
   }

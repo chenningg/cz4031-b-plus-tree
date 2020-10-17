@@ -11,6 +11,7 @@ MemoryPool::MemoryPool(std::size_t poolSize, std::size_t blockSize)
   this->blockSize = blockSize;
   this->sizeUsed = 0;
   this->allocated = 0;
+  this->blocksAccessed = 0;
   this->available = poolSize / blockSize;
 
   // Allocate memory for pool
@@ -27,7 +28,15 @@ bool MemoryPool::allocateBlock()
   if (available > 0)
   {
     block = pool + (blockSize * allocated);
-    free = block;
+
+    Block newBlock;
+    newBlock.isAccessed = false;
+
+    // Add block header to check isAccessed flag
+    block = (unsigned char *)(memcpy(block, &newBlock, sizeof(Block)));
+
+    // Assign free pointer to point after block header to insert records to
+    free = block + sizeof(Block);
 
     // Updated variables
     allocated += 1;
@@ -43,17 +52,17 @@ bool MemoryPool::allocateBlock()
   }
 }
 
-unsigned char *MemoryPool::allocate(Movie movie)
+unsigned char *MemoryPool::allocate(Record record)
 {
   // If record size exceeds block size, throw an error.
-  if (sizeof(movie) > blockSize)
+  if (sizeof(record) > blockSize)
   {
-    std::cout << "Error: Record size larger than block size (" << sizeof(Movie) << " vs " << blockSize << ")! Increase block size to store data." << '\n';
+    std::cout << "Error: Record size larger than block size (" << sizeof(Record) << " vs " << blockSize << ")! Increase block size to store data." << '\n';
     return NULL;
   }
 
   // If no free blocks, make a new block.
-  if (free - block + sizeof(movie) > blockSize || allocated == 0)
+  if (free - block + sizeof(record) > blockSize || allocated == 0)
   {
     bool successful = allocateBlock();
     if (!successful)
@@ -63,26 +72,38 @@ unsigned char *MemoryPool::allocate(Movie movie)
   }
 
   // Add record to the block and save its address for indexing.
-  memcpy(free, &movie, sizeof(movie));
-  unsigned char *record = free;
+  memcpy(free, &record, sizeof(record));
+  unsigned char *recordAddress = free;
 
   // Move free pointer forward.
-  free += sizeof(movie);
+  free += sizeof(record);
 
-  return record;
+  return recordAddress;
 }
 
-bool MemoryPool::deallocate(Movie *movie)
+bool MemoryPool::deallocate(Record *record)
 {
-  if (movie != nullptr)
+  if (record != nullptr)
   {
-    movie->isDeleted = true;
+    record->isDeleted = true;
     return true;
   }
   else
   {
-    std::cout << "Error: No chunk found to deallocate at (" << &movie << ")." << '\n';
+    std::cout << "Error: No chunk found to deallocate at (" << &record << ")." << '\n';
     return false;
+  }
+}
+
+unsigned char *MemoryPool::getRecord(Block *blockAddress, int offset)
+{
+  if (blockAddress)
+  {
+    if (blockAddress->isAccessed != true)
+    {
+      blockAddress->isAccessed = true;
+      blocksAccessed += 1;
+    }
   }
 }
 
