@@ -53,7 +53,7 @@ std::tuple<int, int> MemoryPool::allocate(Record record)
   if (sizeof(record) > blockSize)
   {
     std::cout << "Error: Record size larger than block size (" << sizeof(record) << " vs " << blockSize << ")! Increase block size to store data." << '\n';
-    return;
+    throw std::invalid_argument("Record size too large!");
   }
 
   // If no free blocks, make a new block.
@@ -62,7 +62,7 @@ std::tuple<int, int> MemoryPool::allocate(Record record)
     bool isSuccessful = allocateBlock();
     if (!isSuccessful)
     {
-      return;
+      throw std::logic_error("Failed to allocate new block!");
     }
   }
 
@@ -98,13 +98,10 @@ bool MemoryPool::deallocate(int blockID, int offset)
 
 Record MemoryPool::read(int blockID, int offset) const
 {
-  try
-  {
-    Record record = pool.at(blockID).at(offset);
-    return record;
-  }
-  catch (...)
-  {
-    std::cout << "Error: Could not find a record at given blockID (" << blockID << ") and offset (" << offset << ")." << '\n';
-  };
+  Record record = pool.at(blockID).at(offset);
+  return record;
 }
+
+MemoryPool::~MemoryPool(){
+
+};
