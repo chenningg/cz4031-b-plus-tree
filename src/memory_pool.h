@@ -19,8 +19,8 @@ public:
   // =============== Methods ================ //
 
   // Creates a new memory pool with the following parameters:
-  // poolSize: Size of the memory pool.
-  // blockSize: Size of each block in the pool.
+  // maxPoolSize: Maximum size of the memory pool.
+  // blockSize: The fixed size of each block in the pool.
   MemoryPool(std::size_t maxPoolSize, std::size_t blockSize);
 
   // Allocate a new block from the memory pool. Returns false if error.
