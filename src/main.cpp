@@ -58,7 +58,7 @@ int main()
         linestream>>temp.averageRating>>temp.numVotes;
         cout <<"Reading line " <<recordNum +1<<" of data"<<'\n';
         cout << "Size of a record: " << sizeof(temp) << " bytes" << '\n';
-        cout << "Inserted record "<< recordNum <<" at: " << reinterpret_cast<void *>(db.allocate(temp)) << '\n';
+        cout << "Inserted record "<< recordNum +1 <<" at: " << reinterpret_cast<void *>(db.allocate(temp)) << '\n';
         recordNum +=1;
         // cout<<temp.tconst<<","<<temp.averageRating<<","<<temp.numVotes<<'\n';
     }
