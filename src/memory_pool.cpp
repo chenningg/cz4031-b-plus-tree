@@ -11,7 +11,6 @@ MemoryPool::MemoryPool(std::size_t poolSize, std::size_t blockSize)
   this->blockSize = blockSize;
   this->sizeUsed = 0;
   this->allocated = 0;
-  this->blocksAccessed = 0;
   this->available = poolSize / blockSize;
 
   // Allocate memory for pool
@@ -30,7 +29,7 @@ bool MemoryPool::allocateBlock()
     block = pool + (blockSize * allocated);
 
     Block newBlock;
-    newBlock.isAccessed = false;
+    newBlock.blockID = allocated;
 
     // Add block header to check isAccessed flag
     block = (unsigned char *)(memcpy(block, &newBlock, sizeof(Block)));
@@ -99,11 +98,13 @@ unsigned char *MemoryPool::read(Block *blockAddress, int offset)
 {
   if (blockAddress)
   {
-    if (blockAddress->isAccessed != true)
-    {
-      blockAddress->isAccessed = true;
-      blocksAccessed += 1;
-    }
+    unsigned char *record = (unsigned char *)(blockAddress + sizeof(Block) + (sizeof(Record) * offset));
+    return record;
+  }
+  else
+  {
+    std::cout << "Error: No record or block found at (" << &blockAddress << ")." << '\n';
+    return NULL;
   }
 }
 

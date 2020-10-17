@@ -14,7 +14,7 @@ struct Record
 
 struct Block
 {
-  bool isAccessed; // Whether this block has been accessed before.
+  bool blockID; // Unique identifier for block.
 };
 
 class MemoryPool
@@ -83,9 +83,8 @@ private:
   std::size_t blockSize; // Size of each block in pool in bytes.
   std::size_t sizeUsed;  // Current size used up for storage.
 
-  int allocated;      // Number of currently allocated blocks.
-  int available;      // Number of blocks available to allocate.
-  int blocksAccessed; // Number of blocks accessed while getting records.
+  int allocated; // Number of currently allocated blocks.
+  int available; // Number of blocks available to allocate.
 
   unsigned char *pool;  // Pointer to start of memory pool.
   unsigned char *block; // Pointer to start of current block.
