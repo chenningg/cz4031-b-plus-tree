@@ -2,21 +2,23 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
+#include <tuple>
 
 // Constructors
 
-MemoryPool::MemoryPool(std::size_t poolSize, std::size_t blockSize)
+MemoryPool::MemoryPool(std::size_t maxPoolSize, std::size_t blockSize)
 {
-  this->poolSize = poolSize;
+  this->maxPoolSize = maxPoolSize;
   this->blockSize = blockSize;
   this->sizeUsed = 0;
   this->allocated = 0;
-  this->available = poolSize / blockSize;
 
-  // Allocate memory for pool
-  this->pool = new unsigned char[poolSize];
-  this->block = pool;
-  this->free = pool;
+  // Create pool of blocks
+  std::unordered_map<int, std::vector<Record>> blocks;
+
+  this->pool = blocks;
+  this->block = 0;
 }
 
 // Methods
@@ -24,95 +26,85 @@ MemoryPool::MemoryPool(std::size_t poolSize, std::size_t blockSize)
 bool MemoryPool::allocateBlock()
 {
   // Allocate a new block and move free pointer to start of block.
-  if (available > 0)
+  if (sizeUsed + blockSize <= maxPoolSize)
   {
-    block = pool + (blockSize * allocated);
+    std::vector<Record> newBlock;
 
-    Block newBlock;
-    newBlock.blockID = allocated;
-
-    // Add block header to check isAccessed flag
-    block = (unsigned char *)(memcpy(block, &newBlock, sizeof(Block)));
-
-    // Assign free pointer to point after block header to insert records to
-    free = block + sizeof(Block);
+    // Assign new block with blockID
+    pool[allocated] = newBlock;
 
     // Updated variables
+    block = allocated;
     allocated += 1;
-    available -= 1;
     sizeUsed += blockSize;
 
     return true;
   }
   else
   {
-    std::cout << "Error: No memory left to allocate (" << sizeUsed << "/" << poolSize << " used)." << '\n';
+    std::cout << "Error: No memory left to allocate new block (" << sizeUsed << "/" << maxPoolSize << " used)." << '\n';
     return false;
   }
 }
 
-unsigned char *MemoryPool::allocate(Record record)
+std::tuple<int, int> MemoryPool::allocate(Record record)
 {
   // If record size exceeds block size, throw an error.
   if (sizeof(record) > blockSize)
   {
-    std::cout << "Error: Record size larger than block size (" << sizeof(Record) << " vs " << blockSize << ")! Increase block size to store data." << '\n';
-    return NULL;
+    std::cout << "Error: Record size larger than block size (" << sizeof(record) << " vs " << blockSize << ")! Increase block size to store data." << '\n';
+    return;
   }
 
   // If no free blocks, make a new block.
-  if (free - block + sizeof(record) > blockSize || allocated == 0)
+  if (allocated == 0 || pool[block].size() * sizeof(Record) + sizeof(record) > blockSize)
   {
-    bool successful = allocateBlock();
-    if (!successful)
+    bool isSuccessful = allocateBlock();
+    if (!isSuccessful)
     {
-      return NULL;
+      return;
     }
   }
 
   // Add record to the block and save its address for indexing.
-  memcpy(free, &record, sizeof(record));
-  unsigned char *recordAddress = free;
+  pool[block].push_back(record);
+  int offset = pool[block].size() - 1;
 
-  // Move free pointer forward.
-  free += sizeof(record);
+  std::tuple<int, int> recordAddress(block, offset);
 
   return recordAddress;
 }
 
-bool MemoryPool::deallocate(Record *record)
+bool MemoryPool::deallocate(int blockID, int offset)
 {
-  if (record != nullptr)
+  try
   {
-    record->isDeleted = true;
+    std::vector<Record> recordBlock = pool.at(blockID);
+    recordBlock.erase(recordBlock.begin() + offset);
+
+    // If block is empty, just remove it
+    if (recordBlock.size() < 1)
+    {
+      pool.erase(blockID);
+    }
     return true;
   }
-  else
+  catch (...)
   {
-    std::cout << "Error: No chunk found to deallocate at (" << &record << ")." << '\n';
+    std::cout << "Error: Could not remove record/block at given blockID (" << blockID << ") and offset (" << offset << ")." << '\n';
     return false;
-  }
+  };
 }
 
-unsigned char *MemoryPool::read(Block *blockAddress, int offset)
+Record MemoryPool::read(int blockID, int offset) const
 {
-  if (blockAddress)
+  try
   {
-    unsigned char *record = (unsigned char *)(blockAddress + sizeof(Block) + (sizeof(Record) * offset));
+    Record record = pool.at(blockID).at(offset);
     return record;
   }
-  else
+  catch (...)
   {
-    std::cout << "Error: No record or block found at (" << &blockAddress << ")." << '\n';
-    return NULL;
-  }
-}
-
-MemoryPool::~MemoryPool()
-{
-  // Clean up memory
-  delete pool;
-  pool = NULL;
-  block = NULL;
-  free = NULL;
+    std::cout << "Error: Could not find a record at given blockID (" << blockID << ") and offset (" << offset << ")." << '\n';
+  };
 }
