@@ -4,13 +4,13 @@
 
 int main()
 {
-  MemoryPool db{500000000, 100};
+  MemoryPool db(500000000, 100);
 
   std::cout << "Pool size: " << db.getPoolSize() << " bytes" << '\n';
   std::cout << "Block size: " << db.getBlockSize() << " bytes" << '\n';
 
-  Movie test{false, 5.6, 12312, "tt0000001"};
-  Movie test2{false, 7.0, 6246472, "tt0000002"};
+  Movie test = {false, 5.6, 12312, "tt0000001"};
+  Movie test2 = {false, 7.0, 6246472, "tt0000002"};
   std::cout << "Size of a record: " << sizeof(test) << " bytes" << '\n';
 
   std::cout << "Current blocks available: " << db.getAvailable() << " blocks" << '\n';
