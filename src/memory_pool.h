@@ -41,7 +41,7 @@ public:
   bool deallocate(Record *record);
 
   // Access a record given a block address and offset
-  unsigned char *getRecord(Block *blockAddress, int offset);
+  unsigned char *read(Block *blockAddress, int offset);
 
   // Returns the size of the memory pool.
   std::size_t getPoolSize() const

@@ -95,7 +95,7 @@ bool MemoryPool::deallocate(Record *record)
   }
 }
 
-unsigned char *MemoryPool::getRecord(Block *blockAddress, int offset)
+unsigned char *MemoryPool::read(Block *blockAddress, int offset)
 {
   if (blockAddress)
   {
