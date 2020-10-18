@@ -10,8 +10,7 @@ class Node
 {
 private:
   bool IS_LEAF;
-  int *keys;
-  int num_keys;
+  int *keys, num_keys;
   Node **pointers;
   friend class BPTree;
 
@@ -39,8 +38,9 @@ Node::Node()
 {
   keys = new int[MAX_KEYS];
   pointers = new Node *[MAX_KEYS + 1];
-  for (int i = 0; i < MAX_KEYS; i++) {
-      pointers[i] = NULL;
+  for (int i = 0; i < MAX_KEYS; i++)
+  {
+    pointers[i] = NULL;
   }
 }
 
@@ -153,7 +153,10 @@ void BPTree::insert(int x)
       newLeaf->num_keys = MAX_KEYS + 1 - (MAX_KEYS + 1) / 2;
       cursor->pointers[cursor->num_keys] = newLeaf;
       newLeaf->pointers[newLeaf->num_keys] = cursor->pointers[MAX_KEYS];
-      cursor->pointers[MAX_KEYS] = NULL;
+      for (i = cursor->num_keys; i < MAX_KEYS + 1; i++)
+      {
+        cursor->pointers[i] = NULL;
+      }
       for (i = 0; i < cursor->num_keys; i++)
       {
         cursor->keys[i] = tempKeyList[i];
@@ -162,6 +165,8 @@ void BPTree::insert(int x)
       {
         newLeaf->keys[i] = tempKeyList[j];
       }
+
+      cursor->pointers[cursor->num_keys + 1] = newLeaf;
       if (cursor == root)
       {
         Node *newRoot = new Node;
@@ -237,6 +242,10 @@ void BPTree::insertInternal(int x, Node *cursor, Node *child)
     {
       newInternal->pointers[i] = virtualPtr[j];
     }
+    for (int i = cursor->num_keys; i < MAX_KEYS + 1; i++)
+    {
+      cursor->pointers[i + 1] = NULL;
+    }
     if (cursor == root)
     {
       Node *newRoot = new Node;
@@ -284,6 +293,7 @@ void BPTree::display(Node *cursor, int level)
 {
   if (cursor != NULL)
   {
+    cout << cursor;
     for (int i = 0; i < level; i++)
     {
       cout << "   ";
@@ -298,6 +308,18 @@ void BPTree::display(Node *cursor, int level)
     for (int i = cursor->num_keys; i < MAX_KEYS; i++)
     {
       cout << "x ";
+    }
+
+    for (int i = 0; i < MAX_KEYS + 1; i++)
+    {
+      if (cursor->pointers[i] == NULL)
+      {
+        cout << "|       |";
+      }
+      else
+      {
+        cout << cursor->pointers[i] << " ";
+      }
     }
 
     cout << "\n";
@@ -320,7 +342,8 @@ Node *BPTree::getRoot()
 int bpt_2()
 {
   BPTree node;
-  for (int i = 1; i < 50; i++)
+
+  for (int i = 1; i < 22; i++)
   {
     node.insert(i);
   }
@@ -329,8 +352,6 @@ int bpt_2()
 
   // node.search(10);
 }
-
-
 
 // // Searching on a B+ tree in C++
 
@@ -578,21 +599,16 @@ int bpt_2()
 //       } else {
 //         cout << cursor->ptr[i] << " ";
 //       }
-//     }    
-    
+//     }
+
 //     cout << "\n";
 //     if (cursor->IS_LEAF != true) {
 //       for (int i = 0; i < cursor->size + 1; i++) {
 //         display(cursor->ptr[i], level+1);
 //       }
-//     } 
+//     }
 //   }
 // }
-
-
-
-
-
 
 // // Get the root
 // Node *BPTree::getRoot() {
@@ -605,8 +621,7 @@ int bpt_2()
 //   for (int i = 1; i < 22; i++) {
 //     node.insert(i);
 //   }
- 
+
 //   node.display(node.getRoot(), 1);
 
-  
 // }
