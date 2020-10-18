@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 
+
 // Constructors
 
 MemoryPool::MemoryPool(std::size_t poolSize, std::size_t blockSize)
@@ -13,10 +14,18 @@ MemoryPool::MemoryPool(std::size_t poolSize, std::size_t blockSize)
   this->allocated = 0;
   this->available = poolSize / blockSize;
 
+<<<<<<< Updated upstream
   // Allocate memory for pool
   this->pool = new unsigned char[poolSize];
   this->block = pool;
   this->free = pool;
+=======
+  // Create pool of blocks
+  std::unordered_map<int, std::vector<Record> > blocks;
+
+  this->pool = blocks;
+  this->block = 0;
+>>>>>>> Stashed changes
 }
 
 // Methods

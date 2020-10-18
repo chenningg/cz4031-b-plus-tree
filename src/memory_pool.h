@@ -10,7 +10,7 @@ struct Movie
   float averageRating; // Average rating of this movie.
   int numVotes;        // Number of votes of this movie.
   char tconst[10];     // ID of the movie.
-};
+}__attribute__((packed)); //removes padding from struct
 
 class MemoryPool
 {
@@ -78,9 +78,14 @@ private:
   int allocated; // Number of currently allocated blocks.
   int available; // Number of blocks available to allocate.
 
+<<<<<<< Updated upstream
   unsigned char *pool;  // Pointer to start of memory pool.
   unsigned char *block; // Pointer to start of current block.
   unsigned char *free;  // Pointer to the next free address in the memory pool.
+=======
+  std::unordered_map<int, std::vector<Record> > pool; // Memory pool reference (implemented as a map).
+  int block;                                         // Current blockID we are inserting to.
+>>>>>>> Stashed changes
 };
 
 #endif
