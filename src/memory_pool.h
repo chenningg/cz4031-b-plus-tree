@@ -1,7 +1,6 @@
 #ifndef MEMORY_POOL_H
 #define MEMORY_POOL_H
 
-#include "address_type.h"
 #include "types.h"
 
 #include <vector>

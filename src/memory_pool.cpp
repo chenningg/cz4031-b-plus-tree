@@ -1,5 +1,4 @@
 #include "memory_pool.h"
-#include "address_type.h"
 #include "types.h"
 
 #include <iostream>
