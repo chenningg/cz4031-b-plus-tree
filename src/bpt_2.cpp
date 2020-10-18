@@ -122,10 +122,8 @@ void BPTree::insert(int x) {
       newLeaf->IS_LEAF = true;
       cursor->num_keys = (MAX_KEYS + 1) / 2;
       newLeaf->num_keys = MAX_KEYS + 1 - (MAX_KEYS + 1) / 2;
-      cursor->pointers[cursor->num_keys] = newLeaf;
-      newLeaf->pointers[newLeaf->num_keys] = cursor->pointers[MAX_KEYS];
       for (i = cursor->num_keys; i < MAX_KEYS + 1; i++) {
-        cursor->pointers[i] = NULL;
+        cursor->pointers[i+1] = NULL;
       }
       for (i = 0; i < cursor->num_keys; i++) {
         cursor->keys[i] = tempKeyList[i];
@@ -133,16 +131,20 @@ void BPTree::insert(int x) {
       for (i = 0, j = cursor->num_keys; i < newLeaf->num_keys; i++, j++) {
         newLeaf->keys[i] = tempKeyList[j];
       }
+      cursor->pointers[cursor->num_keys] = newLeaf;
 
-      cursor->pointers[cursor->num_keys+1] = newLeaf;
-      if (cursor == root) {                
-        Node *newRoot = new Node;
-        newRoot->keys[0] = newLeaf->keys[0];
-        newRoot->pointers[0] = cursor;
-        newRoot->pointers[1] = newLeaf;
-        newRoot->IS_LEAF = false;
-        newRoot->num_keys = 1;
-        root = newRoot;        
+        if (cursor == root) {
+          Node *newRoot = new Node;
+          newRoot->keys[0] = newLeaf->keys[0];
+          newRoot->pointers[0] = cursor;
+          newRoot->pointers[1] = newLeaf;
+          newRoot->IS_LEAF = false;
+          newRoot->num_keys = 1;
+          for (int i = newRoot->num_keys; i < MAX_KEYS + 1; i++)
+          {
+            newRoot->pointers[i+1] = NULL;
+          }
+          root = newRoot;        
       } else {
         insertInternal(newLeaf->keys[0], parent, newLeaf);
       }
