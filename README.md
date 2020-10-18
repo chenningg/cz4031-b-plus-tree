@@ -14,7 +14,7 @@ There are more than 9 million records in the data. Our goal is to build a B+ tre
 
 - Blocks are stored in a memory pool of up to 500MB in main memory.
 - Each block's size is 100B for the first implementation, and 500B for the second.
-- Each record (movie) has a fixed size of ~24B (TBC).
+- Each record (movie) has a fixed size of ~20B.
 - Multiple records can be stored per block.
 - B+ tree's memory is dynamically allocated on creation.
 - Each B+ tree node is the size of one block.
