@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <unordered_map>
+#include <cstring>
 
 using namespace std;
 
@@ -212,9 +213,23 @@ void BPlusTree::displayNode(Node *node)
   cout << '\n';
 }
 
-// Display a block and its contents in the disk.
+// Display a block and its contents in the disk. Assume it's already loaded in main memory.
 void BPlusTree::displayBlock(void *block)
 {
+  if (*(unsigned char *)&block == '\0')
+  {
+    cout << "Empty block!" << '\n';
+  }
+  else
+  {
+    void *endOfBlock = &block + nodeSize;
+    while (*(unsigned char *)&block != '\0' && block < endOfBlock)
+    {
+      Record *record = (Record *)block;
+      cout << "|" << record->tconst << "|" << record->averageRating << "|" << record->numVotes << "|" << '\n';
+      block = &block + sizeof(Record);
+    }
+  }
 }
 
 // Insert a record into the B+ Tree index. Key: Record's avgRating, Value: {blockAddress, offset}.
