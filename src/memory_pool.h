@@ -29,13 +29,10 @@ public:
   // Allocates a new chunk to the memory pool.
   // Creates a new block if chunk is unable to fit in current free block.
   // Returns a tuple with blockID and the record's offset within the block.
-  std::tuple<int, int> allocate(Record record);
+  std::tuple<void *, std::size_t> allocate(std::size_t sizeRequired);
 
   // Deallocates an existing record and block if block becomes empty. Returns false if error.
-  bool deallocate(int blockID, int offset);
-
-  // Access a record given a blockID and offset. Returns a record.
-  Record read(int blockID, int offset) const;
+  bool deallocate(void *blockAddress, std::size_t offset, std::size_t sizeToDelete);
 
   // Returns the maximum size of this memory pool.
   std::size_t getMaxPoolSize() const
@@ -47,6 +44,12 @@ public:
   std::size_t getBlockSize() const
   {
     return blockSize;
+  };
+
+  // Returns the size used in the current block.
+  std::size_t getBlockSizeUsed() const
+  {
+    return blockSizeUsed;
   };
 
   // Returns current size used in memory pool (total blocks size).
@@ -77,11 +80,12 @@ private:
   std::size_t blockSize;      // Size of each block in pool in bytes.
   std::size_t sizeUsed;       // Current size used up for storage (total block size).
   std::size_t actualSizeUsed; // Actual size used based on records stored in storage.
+  std::size_t blockSizeUsed;  // Size used up within the curent block we are pointing to.
 
   int allocated; // Number of currently allocated blocks.
 
-  std::unordered_map<int, std::vector<Record>> pool; // Memory pool reference (implemented as a map).
-  int block;                                         // Current blockID we are inserting to.
+  void *pool;  // Memory pool reference.
+  void *block; // Current block pointer we are inserting to.
 };
 
 #endif

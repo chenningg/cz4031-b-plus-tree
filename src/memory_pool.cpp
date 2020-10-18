@@ -2,8 +2,11 @@
 
 #include <iostream>
 #include <vector>
-#include <unordered_map>
 #include <tuple>
+#include <cstring>
+
+// We need to create a general memory pool that can be used for both the relational data and the index.
+// This pool should be able to assign new blocks if necessary.
 
 // Constructors
 
@@ -16,10 +19,10 @@ MemoryPool::MemoryPool(std::size_t maxPoolSize, std::size_t blockSize)
   this->allocated = 0;
 
   // Create pool of blocks.
-  std::unordered_map<int, std::vector<Record>> blocks;
-
-  this->pool = blocks;
-  this->block = 0;
+  this->pool = operator new(maxPoolSize);
+  std::memset(pool, '\0', maxPoolSize); // Initialize pool all to null.
+  this->block = nullptr;
+  this->blockSizeUsed = 0;
 }
 
 // Methods
@@ -29,15 +32,14 @@ bool MemoryPool::allocateBlock()
   // Only allocate a new block if we don't exceed maxPoolSize.
   if (sizeUsed + blockSize <= maxPoolSize)
   {
-    std::vector<Record> newBlock;
-
-    // Assign new block with blockID.
-    pool[allocated] = newBlock;
-
     // Update variables
-    block = allocated; // Set current blockID to maintain a reference to current block.
-    allocated += 1;
     sizeUsed += blockSize;
+    block = pool + allocated * blockSize; // Set current block pointer to new block.
+    blockSizeUsed = 0;                    // Reset offset to 0.
+
+    allocated += 1;
+
+    std::cout << "------- New block allocated! -------" << '\n';
 
     return true;
   }
@@ -48,17 +50,17 @@ bool MemoryPool::allocateBlock()
   }
 }
 
-std::tuple<int, int> MemoryPool::allocate(Record record)
+std::tuple<void *, std::size_t> MemoryPool::allocate(std::size_t sizeRequired)
 {
   // If record size exceeds block size, throw an error.
-  if (sizeof(record) > blockSize)
+  if (sizeRequired > blockSize)
   {
-    std::cout << "Error: Record size larger than block size (" << sizeof(record) << " vs " << blockSize << ")! Increase block size to store data." << '\n';
-    throw std::invalid_argument("Record size too large!");
+    std::cout << "Error: Size required larger than block size (" << sizeRequired << " vs " << blockSize << ")! Increase block size to store data." << '\n';
+    throw std::invalid_argument("Requested size too large!");
   }
 
-  // If no free blocks, or record can't fit into current block, make a new block.
-  if (allocated == 0 || pool[block].size() * sizeof(Record) + sizeof(record) > blockSize)
+  // If no current block, or record can't fit into current block, make a new block.
+  if (allocated == 0 || blockSizeUsed + sizeRequired > blockSize)
   {
     bool isSuccessful = allocateBlock();
     if (!isSuccessful)
@@ -67,53 +69,46 @@ std::tuple<int, int> MemoryPool::allocate(Record record)
     }
   }
 
-  // Add record to the block and save its blockID (address) and offset for indexing.
-  pool[block].push_back(record);
-  int offset = pool[block].size() - 1;
+  // Update variables
+  std::size_t offset = blockSizeUsed;
 
-  // Update actual size used.
-  actualSizeUsed += sizeof(record);
+  blockSizeUsed += sizeRequired;
+  actualSizeUsed += sizeRequired;
 
-  std::tuple<int, int> recordAddress(block, offset);
+  // Return the new memory space to put in the record.
+  std::tuple<void *, std::size_t> recordAddress(block, offset);
 
   return recordAddress;
 }
 
-bool MemoryPool::deallocate(int blockID, int offset)
+bool MemoryPool::deallocate(void *blockAddress, std::size_t offset, std::size_t sizeToDelete)
 {
   try
   {
     // Remove record from block.
-    std::vector<Record> recordBlock = pool.at(blockID);
-    recordBlock.erase(recordBlock.begin() + offset);
+    void *addressToDelete = blockAddress + offset;
+    std::memset(addressToDelete, '\0', sizeToDelete);
 
     // Update actual size used.
-    actualSizeUsed -= sizeof(Record);
+    actualSizeUsed -= sizeToDelete;
 
-    // If block is empty, just remove it.
-    if (recordBlock.size() < 1)
+    // If block is empty, just remove the size of the block (but don't deallocate block!).
+    unsigned char testblock[sizeToDelete];
+    memset(testblock, '\0', sizeToDelete);
+
+    // Block is empty, remove size of block.
+    if (memcmp(testblock, blockAddress, sizeToDelete) == 0)
     {
-      pool.erase(blockID);
-
-      // Update size used.
       sizeUsed -= blockSize;
     }
+
     return true;
   }
   catch (...)
   {
-    std::cout << "Error: Could not remove record/block at given blockID (" << blockID << ") and offset (" << offset << ")." << '\n';
+    std::cout << "Error: Could not remove record/block at given address (" << blockAddress << ") and offset (" << offset << ")." << '\n';
     return false;
   };
 }
 
-Record MemoryPool::read(int blockID, int offset) const
-{
-  // Retrieve record from blockID and offset provided.
-  Record record = pool.at(blockID).at(offset);
-  return record;
-}
-
-MemoryPool::~MemoryPool(){
-
-};
+MemoryPool::~MemoryPool(){};

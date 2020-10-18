@@ -30,17 +30,21 @@ int main()
       std::getline(linestream, data, '\t');
       linestream >> temp.averageRating >> temp.numVotes;
 
-      std::tuple<int, int> record = db.allocate(temp);
+      std::tuple<void *, std::size_t> record = db.allocate(sizeof(temp));
+
+      memcpy(std::get<0>(record) + std::get<1>(record), &temp, sizeof(temp));
 
       cout << "Reading line " << recordNum + 1 << " of data" << '\n';
       cout << "Size of a record: " << sizeof(temp) << " bytes" << '\n';
-      cout << "Inserted record " << recordNum + 1 << " at blockID: " << std::get<0>(record) << " and offset: " << std::get<1>(record) << '\n';
+      cout << "Inserted record " << recordNum + 1 << " at address: " << std::get<0>(record) + std::get<1>(record) << '\n';
+
+      Record check = *(Record *)(std::get<0>(record) + std::get<1>(record));
+      cout << check.tconst << '\n';
 
       recordNum += 1;
-      // cout<<temp.tconst<<","<<temp.averageRating<<","<<temp.numVotes<<'\n';
     }
     file.close();
-  }
+  };
 
   cout << "Current blocks used: " << db.getAllocated() << " blocks" << '\n';
   cout << "Actual size used: " << db.getActualSizeUsed() << " bytes" << '\n';
