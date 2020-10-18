@@ -19,4 +19,6 @@ typedef struct TreeNode
 // public:
 // };
 
+int bpt_test();
+
 #endif

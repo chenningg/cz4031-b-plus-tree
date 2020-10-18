@@ -319,7 +319,7 @@ void displayTree(TreeNode *bptnode, int level)
   cout << endl;
 }
 // set the maximum to 5
-int main()
+int bpt_test()
 {
   int n = 5;
   TreeNode *root = initTreeNode(n, true);

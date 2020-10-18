@@ -29,23 +29,19 @@ There are more than 9 million records in the data. Our goal is to build a B+ tre
   For example, if we use the [code runner](https://marketplace.visualstudio.com/items?itemName=formulahendry.code-runner) extension for VSCode, we would add this in `settings.json`:
 
   ```
-  {
-    "code-runner.executorMap": {
-      "cpp": "cd $dir && g++ *.cpp -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
-    }
+  "code-runner.executorMap": {
+    "cpp": "cd $dir && g++ *.cpp -o $fileNameWithoutExt && $dir$fileNameWithoutExt",
   }
   ```
 
   If we were running C++ using VSCode directly, we would define the `tasks.json` file with corresponding `args` to include all C++ files:
 
   ```
-  {
-    "tasks": [
-      {
-        "args": ["-g", "${workspaceFolder}\\*.cpp", "-o", "${fileDirname}\\${fileBasenameNoExtension}.exe"],
-      }
-    ]
-  }
+  "tasks": [
+    {
+      "args": ["-g", "${workspaceFolder}\\*.cpp", "-o", "${fileDirname}\\${fileBasenameNoExtension}.exe"],
+    }
+  ]
   ```
 
 - `cd` to `main.cpp` under the `src` folder and compile the executable.

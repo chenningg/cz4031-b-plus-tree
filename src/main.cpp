@@ -1,4 +1,5 @@
 #include "memory_pool.h"
+#include "bpt.h"
 
 #include <iostream>
 #include <fstream>
@@ -134,6 +135,8 @@ int main()
   // - The height of the updated B + tree;
   // - The root node and its child nodes of the updated B + tree;
   // =============================================================
+
+  bpt_test();
 
   return 0;
 }
