@@ -2,6 +2,7 @@
 #define B_PLUS_TREE_H
 
 #include "types.h"
+#include "memory_pool.h"
 
 #include <cstddef>
 #include <vector>
@@ -29,7 +30,7 @@ class BPlusTree
 {
 private:
   // Variables
-
+  MemoryPool *index;    // Pointer to a memory pool in disk for index.
   Node *root;           // Pointer to root of the B+ Tree.
   int maxKeys;          // Maximum keys in a node.
   std::size_t nodeSize; // Size of a node = Size of block.
@@ -55,6 +56,12 @@ public:
 
   // Prints out the B+ Tree in the console.
   void display(Node *, int level);
+
+  // Prints out a specific node and its contents in the B+ Tree.
+  void displayNode(Node *node);
+
+  // Prints out a data block and its contents in the disk.
+  void displayBlock(void *block);
 
   // Returns a pointer to the root of the B+ Tree.
   Node *getRoot();

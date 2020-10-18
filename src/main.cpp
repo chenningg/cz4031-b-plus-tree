@@ -14,7 +14,8 @@ using namespace std;
 
 int main()
 {
-  // MemoryPool db(500000000, 100);
+  // Create memory pools for the disk.
+  MemoryPool disk(350000000, 100);
 
   // // =============================================================
   // // Experiment 1:

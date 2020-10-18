@@ -1,4 +1,5 @@
 #include "b_plus_tree.h"
+#include "memory_pool.h"
 #include "types.h"
 
 #include <tuple>
@@ -29,7 +30,7 @@ BPlusTree::BPlusTree(std::size_t blockSize)
 
   // Initialize node buffer with a pointer.
   int sum = sizeof(Address);
-  maxKeys = 0;
+  int maxKeys = 0;
 
   // Try to fit as many pointer key pairs as possible into the node block.
   while (sum + sizeof(Address) + sizeof(float) <= nodeBufferSize)
@@ -48,6 +49,10 @@ BPlusTree::BPlusTree(std::size_t blockSize)
 
   // Set node size to be equal to block size.
   nodeSize = blockSize;
+
+  // Initialize disk space for index.
+  MemoryPool pool(350000000, 100);
+  index = &pool;
 }
 
 vector<Record> BPlusTree::select(float lowerBoundKey, float upperBoundKey)
@@ -62,6 +67,8 @@ vector<Record> BPlusTree::select(float lowerBoundKey, float upperBoundKey)
   {
     // Set cursor to root (root must be in main memory to access B+ Tree).
     Node *cursor = root;
+    int indexNodesAccessed = 1; // Count number of index nodes accessed.
+    int dataBlocksAccessed = 0; // Count number of data blocks accessed.
 
     // While we haven't hit a leaf node, search for the corresponding lowerBoundKey within the cursor node's keys.
     while (cursor->isLeaf == false)
@@ -81,6 +88,7 @@ vector<Record> BPlusTree::select(float lowerBoundKey, float upperBoundKey)
 
           // Set cursor to the child node, now loaded in main memory.
           cursor = (Node *)mainMemoryNode;
+          indexNodesAccessed += 1;
           break;
         }
         // If we reached the end of all keys in this node (larger than all), then go to the right pointer's node to continue searching.
@@ -95,6 +103,7 @@ vector<Record> BPlusTree::select(float lowerBoundKey, float upperBoundKey)
 
           // Set cursor to the child node, now loaded in main memory.
           cursor = (Node *)mainMemoryNode;
+          indexNodesAccessed += 1;
           break;
         }
       }
@@ -126,6 +135,8 @@ vector<Record> BPlusTree::select(float lowerBoundKey, float upperBoundKey)
 
             // Keep track of loaded blocks so we don't have to reload them from disk.
             loadedBlocks[blockAddress] = mainMemoryBlock;
+
+            dataBlocksAccessed += 1;
           }
 
           // Here, we can access the loaded block (in main memory) to get the record that fits our search range.
@@ -152,10 +163,15 @@ vector<Record> BPlusTree::select(float lowerBoundKey, float upperBoundKey)
 
           // Set cursor to the child node, now loaded in main memory.
           cursor = (Node *)mainMemoryNode;
+          indexNodesAccessed += 1;
           break;
         }
       }
     }
+
+    // Report on blocks searched.
+    cout << "Number of index nodes accessed: " << indexNodesAccessed << '\n';
+    cout << "Number of data blocks accessed: " << dataBlocksAccessed << '\n';
 
     // If nothing found, throw an error.
     if (results.size() < 1)
@@ -170,6 +186,37 @@ vector<Record> BPlusTree::select(float lowerBoundKey, float upperBoundKey)
   }
 }
 
+// Display a node and its contents in the B+ Tree.
+void BPlusTree::displayNode(Node *node)
+{
+  // Print out all contents in the node as such |pointer|key|pointer|
+  int i = 0;
+  cout << "|";
+  while (i < node->numKeys)
+  {
+    cout << node->pointers[i].blockAddress << "|";
+    cout << node->keys[i] << "|";
+    i += 1;
+  }
+
+  // Print last filled pointer
+  cout << node->pointers[i + 1].blockAddress << "|";
+
+  while (i < maxKeys)
+  {
+    cout << " x |";      // Remaining empty keys
+    cout << "  Null  |"; // Remaining empty pointers
+    i += 1;
+  }
+
+  cout << '\n';
+}
+
+// Display a block and its contents in the disk.
+void BPlusTree::displayBlock(void *block)
+{
+}
+
 // Insert a record into the B+ Tree index. Key: Record's avgRating, Value: {blockAddress, offset}.
 void BPlusTree::insert(Address address, float key)
 {
@@ -181,6 +228,9 @@ void BPlusTree::insert(Address address, float key)
     root->keys[0] = key;
     root->isLeaf = true; // It is both the root and a leaf.
     root->numKeys = 1;
+
+    // Write the node into disk.
+    void *index.allocate(nodeSize);
   }
   else
   {
