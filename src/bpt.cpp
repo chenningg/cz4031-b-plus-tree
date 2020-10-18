@@ -1,3 +1,5 @@
+#include "bpt.h"
+
 #include <iostream>
 #include <tuple>
 #include <sstream>
@@ -8,7 +10,6 @@
 #include <vector>
 #include <algorithm>
 #include <array>
-#include "b+_tree.h"
 #include <limits.h>
 
 using namespace std;
