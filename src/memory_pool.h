@@ -10,7 +10,11 @@ struct Movie
   float averageRating; // Average rating of this movie.
   int numVotes;        // Number of votes of this movie.
   char tconst[10];     // ID of the movie.
+<<<<<<< Updated upstream
 }__attribute__((packed)); //removes padding from struct
+=======
+}__attribute__((packed));
+>>>>>>> Stashed changes
 
 class MemoryPool
 {
