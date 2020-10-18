@@ -1,17 +1,12 @@
 #ifndef MEMORY_POOL_H
 #define MEMORY_POOL_H
 
+#include "address_type.h"
+#include "types.h"
+
 #include <vector>
 #include <unordered_map>
 #include <tuple>
-
-// Defines a single movie record (read from data file).
-struct Record
-{
-  float averageRating; // Average rating of this movie.
-  int numVotes;        // Number of votes of this movie.
-  char tconst[10];     // ID of the movie.
-};
 
 class MemoryPool
 {
@@ -28,11 +23,11 @@ public:
 
   // Allocates a new chunk to the memory pool.
   // Creates a new block if chunk is unable to fit in current free block.
-  // Returns a tuple with blockID and the record's offset within the block.
-  std::tuple<void *, std::size_t> allocate(std::size_t sizeRequired);
+  // Returns a struct with blockID and the record's offset within the block.
+  Address allocate(std::size_t sizeRequired);
 
   // Deallocates an existing record and block if block becomes empty. Returns false if error.
-  bool deallocate(void *blockAddress, std::size_t offset, std::size_t sizeToDelete);
+  bool deallocate(void *blockAddress, short int offset, std::size_t sizeToDelete);
 
   // Returns the maximum size of this memory pool.
   std::size_t getMaxPoolSize() const
@@ -84,7 +79,7 @@ private:
 
   int allocated; // Number of currently allocated blocks.
 
-  void *pool;  // Memory pool reference.
+  void *pool;  // Pointer to the memory pool.
   void *block; // Current block pointer we are inserting to.
 };
 

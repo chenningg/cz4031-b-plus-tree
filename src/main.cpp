@@ -143,5 +143,6 @@ int main()
   cout << "\n\nbpt_2" << endl;
   bpt_2();
 
+  cout << sizeof(Address) << endl;
   return 0;
 }

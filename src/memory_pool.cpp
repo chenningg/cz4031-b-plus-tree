@@ -1,4 +1,6 @@
 #include "memory_pool.h"
+#include "address_type.h"
+#include "types.h"
 
 #include <iostream>
 #include <vector>
@@ -50,7 +52,7 @@ bool MemoryPool::allocateBlock()
   }
 }
 
-std::tuple<void *, std::size_t> MemoryPool::allocate(std::size_t sizeRequired)
+Address MemoryPool::allocate(std::size_t sizeRequired)
 {
   // If record size exceeds block size, throw an error.
   if (sizeRequired > blockSize)
@@ -70,18 +72,18 @@ std::tuple<void *, std::size_t> MemoryPool::allocate(std::size_t sizeRequired)
   }
 
   // Update variables
-  std::size_t offset = blockSizeUsed;
+  short int offset = blockSizeUsed;
 
   blockSizeUsed += sizeRequired;
   actualSizeUsed += sizeRequired;
 
   // Return the new memory space to put in the record.
-  std::tuple<void *, std::size_t> recordAddress(block, offset);
+  Address recordAddress = {block, offset};
 
   return recordAddress;
 }
 
-bool MemoryPool::deallocate(void *blockAddress, std::size_t offset, std::size_t sizeToDelete)
+bool MemoryPool::deallocate(void *blockAddress, short int offset, std::size_t sizeToDelete)
 {
   try
   {
@@ -93,11 +95,12 @@ bool MemoryPool::deallocate(void *blockAddress, std::size_t offset, std::size_t 
     actualSizeUsed -= sizeToDelete;
 
     // If block is empty, just remove the size of the block (but don't deallocate block!).
-    unsigned char testblock[sizeToDelete];
-    memset(testblock, '\0', sizeToDelete);
+    // Create a new test block full of NULL to test against the actual block to see if it's empty.
+    unsigned char testBlock[sizeToDelete];
+    memset(testBlock, '\0', sizeToDelete);
 
     // Block is empty, remove size of block.
-    if (memcmp(testblock, blockAddress, sizeToDelete) == 0)
+    if (memcmp(testBlock, blockAddress, sizeToDelete) == 0)
     {
       sizeUsed -= blockSize;
     }
