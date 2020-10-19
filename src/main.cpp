@@ -16,7 +16,7 @@ using namespace std;
 int main()
 {
   // Create memory pools for the disk.
-  MemoryPool disk(350000000, 100);
+  // MemoryPool db(100000, 100);
 
   // =============================================================
   // Experiment 1:
@@ -29,7 +29,7 @@ int main()
   // std::vector<Address> records;
 
   // // Open test data
-  // std::ifstream file("../data/testdata.tsv");
+  // std::ifstream file("../../data/testdata.tsv");
 
   // // Insert data into database and populate list of addresses
   // if (file.is_open())
@@ -47,20 +47,27 @@ int main()
   //     std::getline(linestream, data, '\t');
   //     linestream >> temp.averageRating >> temp.numVotes;
 
-  //     Address record = disk.allocate(sizeof(temp));
+  //     Address record = db.allocate(sizeof(temp));
 
   //     // Add it to list of addresses
   //     records.push_back(record);
 
   //     // Add to database
-  //     memcpy(std::get<0>(record) + std::get<1>(record), &temp, sizeof(temp));
+  //     memcpy(record.blockAddress + record.offset, &temp, sizeof(temp));
 
-  //     cout << "Inserted record " << recordNum + 1 << " at address: " << std::get<0>(record) + std::get<1>(record) << '\n';
+  //     cout << "Inserted record " << recordNum + 1 << " at address: " << record.blockAddress << '\n';
 
   //     recordNum += 1;
   //   }
   //   file.close();
   // };
+
+  // for (int i = 0; i < records.size(); i++)
+  // {
+  //   Record record = *(Record *)(records[i].blockAddress + records[i].offset);
+  //   cout << record.tconst << endl;
+  //   ;
+  // }
 
   // cout << "Number of blocks used: " << db.getAllocated() << " blocks" << '\n';
   // cout << "Actual size used: " << db.getActualSizeUsed() << " bytes" << '\n';

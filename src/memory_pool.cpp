@@ -115,4 +115,7 @@ bool MemoryPool::deallocate(void *blockAddress, short int offset, std::size_t si
   };
 }
 
-MemoryPool::~MemoryPool(){};
+MemoryPool::~MemoryPool()
+{
+  delete pool;
+};
