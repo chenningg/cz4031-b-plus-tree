@@ -33,6 +33,7 @@ private:
   MemoryPool *index;    // Pointer to a memory pool in disk for index.
   Node *root;           // Pointer to root of the B+ Tree.
   int maxKeys;          // Maximum keys in a node.
+  int levels;           // Number of levels in this B+ Tree.
   std::size_t nodeSize; // Size of a node = Size of block.
 
   // Methods
@@ -63,8 +64,19 @@ public:
   // Prints out a data block and its contents in the disk.
   void displayBlock(void *block);
 
+  // Getters and setters
+
   // Returns a pointer to the root of the B+ Tree.
-  Node *getRoot();
+  Node *getRoot()
+  {
+    return root;
+  };
+
+  // Returns the number of levels in this B+ Tree.
+  int getLevels()
+  {
+    return levels;
+  }
 };
 
 #endif
