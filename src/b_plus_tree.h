@@ -32,6 +32,7 @@ private:
   // Variables
   MemoryPool *index;    // Pointer to a memory pool in disk for index.
   Node *root;           // Pointer to root of the B+ Tree.
+  void *rootAddress;    // Pointer to root's address on disk.
   int maxKeys;          // Maximum keys in a node.
   int levels;           // Number of levels in this B+ Tree.
   int numNodes;         // Number of nodes in this B+ Tree.
@@ -55,6 +56,9 @@ public:
 
   // Inserts a record into the B+ Tree.
   void insert(Address address, float key);
+
+  // Inserts a new parent in the middle levels of a B+ Tree to be the parent of two split child nodes from insertion.
+  void insertInternal(float lowerBound, Node *parent, Node *newChild, Node *newChildDiskAddress);
 
   // Prints out the B+ Tree in the console.
   void display(Node *, int level);

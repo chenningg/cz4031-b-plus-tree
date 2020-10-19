@@ -256,6 +256,9 @@ void BPlusTree::insert(Address address, float key)
     void *diskNode = index->allocate(nodeSize).blockAddress;
     memcpy(diskNode, (void *)root, nodeSize);
 
+    // Keep track of root node's disk address.
+    rootAddress = diskNode;
+
     // Update number of nodes and levels
     numNodes++;
     levels++;
@@ -264,8 +267,9 @@ void BPlusTree::insert(Address address, float key)
   else
   {
     Node *cursor = root;
-    Node *parent;
-    void *diskAddress; // Store current node's disk address in case we need to update it in disk.
+    Node *parent;                          // Keep track of the parent as we go deeper into the tree in case we need to update it.
+    void *parentDiskAddress = rootAddress; // Keep track of parent's disk address as well so we can update parent in disk.
+    void *diskAddress;                     // Store current node's disk address in case we need to update it in disk.
 
     // While not leaf, keep following the nodes to correct key.
     while (cursor->isLeaf == false)
@@ -449,15 +453,17 @@ void BPlusTree::insert(Address address, float key)
       // If we are not at the root, we need to insert a new parent in the middle levels of the tree.
       else
       {
-        insertInternal(newLeaf->keys[0], parent, newLeaf);
+        insertInternal(newLeaf->keys[0], (Node *)diskAddress, (Node *)newLeafAddress.blockAddress, cursor, newLeaf);
       }
     }
   }
 }
 
-// Insert Operation
-void BPTree::insertInternal(int x, Node *cursor, Node *child)
+// Inserts a parent node in the middle of the tree to two split child nodes.
+// Takes the lower bound of the right child, and the main memory address of the parent and the new child, as well as disk address of new child.
+void BPlusTree::insertInternal(float lowerBound, Node *parent, Node *newChild, Node *newChildDiskAddress)
 {
+  // If
   if (cursor->num_keys < MAX_KEYS)
   {
     int i = 0;
