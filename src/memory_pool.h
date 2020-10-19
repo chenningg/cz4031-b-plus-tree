@@ -20,9 +20,8 @@ public:
   // Allocate a new block from the memory pool. Returns false if error.
   bool allocateBlock();
 
-  // Allocates a new chunk to the memory pool.
-  // Creates a new block if chunk is unable to fit in current free block.
-  // Returns a struct with blockID and the record's offset within the block.
+  // Allocates a new chunk to the memory pool. Creates a new block if chunk is unable to fit in current free block.
+  // Returns a struct with the block's address and the record's offset within the block.
   Address allocate(std::size_t sizeRequired);
 
   // Deallocates an existing record and block if block becomes empty. Returns false if error.
