@@ -1,4 +1,5 @@
 #include "memory_pool.h"
+#include "b_plus_tree.h"
 #include "bpt.h"
 #include "bpt_2.h"
 
@@ -17,15 +18,15 @@ int main()
   // Create memory pools for the disk.
   MemoryPool disk(350000000, 100);
 
-  // // =============================================================
-  // // Experiment 1:
-  // // Store the data (which is about IMDb movives and described in Part 4) on the disk and report the following statistics:
-  // // - The number of blocks;
-  // // - The size of database;
-  // // =============================================================
+  // =============================================================
+  // Experiment 1:
+  // Store the data (which is about IMDb movives and described in Part 4) on the disk and report the following statistics:
+  // - The number of blocks;
+  // - The size of database;
+  // =============================================================
 
   // // Create a list of all addresses
-  // std::vector<std::tuple<void *, std::size_t>> records;
+  // std::vector<Address> records;
 
   // // Open test data
   // std::ifstream file("../data/testdata.tsv");
@@ -46,7 +47,7 @@ int main()
   //     std::getline(linestream, data, '\t');
   //     linestream >> temp.averageRating >> temp.numVotes;
 
-  //     std::tuple<void *, std::size_t> record = db.allocate(sizeof(temp));
+  //     Address record = disk.allocate(sizeof(temp));
 
   //     // Add it to list of addresses
   //     records.push_back(record);
@@ -82,7 +83,7 @@ int main()
   // unordered_map<void *, void *> loadedBlocks;
 
   // // Iterate through all records stored in database.
-  // for (std::vector<std::tuple<void *, std::size_t>>::iterator it = records.begin(); it != records.end(); ++it)
+  // for (Record = records.begin(); it != records.end(); ++it)
   // {
   //   // This mimics the loading of disk data to main memory, pointing at the disk block.
   //   void *blockAddress = std::get<0>(*it);
@@ -91,8 +92,8 @@ int main()
   //   // Check if this block hasn't been loaded yet.
   //   if (loadedBlocks.find(blockAddress) == loadedBlocks.end())
   //   {
-  //     void *mainMemoryBlock = operator new(db.getBlockSize());
-  //     memcpy(mainMemoryBlock, blockAddress, db.getBlockSize());
+  //     void *mainMemoryBlock = operator new(disk.getBlockSize());
+  //     memcpy(mainMemoryBlock, blockAddress, disk.getBlockSize());
 
   //     loadedBlocks[blockAddress] = mainMemoryBlock;
   //   }
@@ -138,12 +139,14 @@ int main()
   // // - The root node and its child nodes of the updated B + tree;
   // // =============================================================
 
-  cout << "bpt_test" << endl;
-  bpt_test();
+  // cout << "bpt_test" << endl;
+  // bpt_test();
 
-  cout << "\n\nbpt_2" << endl;
-  bpt_2();
+  // cout << "\n\nbpt_2" << endl;
+  // bpt_2();
 
-  cout << sizeof(Address) << endl;
+  // cout << sizeof(Address) << endl;
+
+  b_plus_tree_test();
   return 0;
 }

@@ -12,10 +12,11 @@ class Node
 {
 private:
   // Variables
-  bool isLeaf;            // Whether this node is a leaf node.
-  float *keys;            // Pointer to an array of keys in this node.
-  int numKeys;            // Current number of keys in this node.
   Address *pointers;      // A pointer to an array of struct {void *blockAddress, short int offset} containing other nodes in disk.
+  float *keys;            // Pointer to an array of keys in this node.
+  Address *parent;        // A pointer to the parent of this node in the disk.
+  int numKeys;            // Current number of keys in this node.
+  bool isLeaf;            // Whether this node is a leaf node.
   friend class BPlusTree; // Let the BPlusTree class access this class' private variables.
 
 public:
@@ -31,7 +32,7 @@ class BPlusTree
 private:
   // Variables
   MemoryPool *index;    // Pointer to a memory pool in disk for index.
-  Node *root;           // Pointer to root of the B+ Tree.
+  Node *root;           // Pointer to root of the B+ Tree in main memory.
   void *rootAddress;    // Pointer to root's address on disk.
   int maxKeys;          // Maximum keys in a node.
   int levels;           // Number of levels in this B+ Tree.
@@ -40,10 +41,11 @@ private:
 
   // Methods
 
-  void insertInternal(int, Node *, Node *);
+  // Updates the parent node to point at both child nodes, and adds a parent node if needed.
+  // void insertInternal(float lowerBound, Node *cursor, Node *cursorDiskAddress, Node *newChild, Node *newChildDiskAddress);
 
   // Finds the direct parent of a node in the B+ Tree.
-  Node *findParent(Node *, Node *);
+  // Node *findParent(Node *, Node *);
 
 public:
   // Methods
@@ -56,9 +58,6 @@ public:
 
   // Inserts a record into the B+ Tree.
   void insert(Address address, float key);
-
-  // Inserts a new parent in the middle levels of a B+ Tree to be the parent of two split child nodes from insertion.
-  void insertInternal(float lowerBound, Node *parent, Node *newChild, Node *newChildDiskAddress);
 
   // Prints out the B+ Tree in the console.
   void display(Node *, int level);
@@ -88,5 +87,7 @@ public:
     return numNodes;
   }
 };
+
+void b_plus_tree_test();
 
 #endif

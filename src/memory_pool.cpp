@@ -79,6 +79,8 @@ Address MemoryPool::allocate(std::size_t sizeRequired)
   // Return the new memory space to put in the record.
   Address recordAddress = {block, offset};
 
+  std::cout << "Allocating " << recordAddress.blockAddress << '\n';
+
   return recordAddress;
 }
 
