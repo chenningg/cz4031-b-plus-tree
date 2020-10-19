@@ -13,15 +13,18 @@ print(df.head(5))
 duplicate_numVotes = df.pivot_table(index=['numVotes'], aggfunc='size')
 print(duplicate_numVotes)
 
+max_votes = max(duplicate_numVotes)
+
 # logscale since expecting imbalanced data
-duplicate_numVotes = np.log2(duplicate_numVotes)
+duplicate_numVotes = np.log10(duplicate_numVotes)
 
 # visualize and save
-ax = duplicate_numVotes.plot.hist(alpha=0.5)
-ax.set_xlabel("log2(numVotes)")
-ax.set_ylabel("log2(frequency)")
-
+ax = duplicate_numVotes.plot.hist(bins=20)
+ax.set_xlabel("log10(numVotes)")
+ax.set_ylabel("log10(frequency)")
+ax.set_title("Frequency of votes against number of votes. The max votes: " + str(max_votes))
 abs_save_path = os.path.join(dir_path, "numVotes_frequency.png")
 plt.savefig(abs_save_path)
+
 
 plt.show()
