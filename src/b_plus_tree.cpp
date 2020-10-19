@@ -51,6 +51,10 @@ BPlusTree::BPlusTree(std::size_t blockSize)
   // Set node size to be equal to block size.
   nodeSize = blockSize;
 
+  // Initialize initial variables
+  levels = 0;
+  numNodes = 0;
+
   // Initialize disk space for index.
   MemoryPool pool(150000000, 100);
   index = &pool;
@@ -251,6 +255,10 @@ void BPlusTree::insert(Address address, float key)
     // Write the node into disk.
     void *diskNode = index->allocate(nodeSize).blockAddress;
     memcpy(diskNode, (void *)root, nodeSize);
+
+    // Update number of nodes and levels
+    numNodes++;
+    levels++;
   }
   // Else if root exists already, traverse the nodes to find the proper place to insert the key.
   else
@@ -339,11 +347,17 @@ void BPlusTree::insert(Address address, float key)
       Node *newLeaf = new Node(maxKeys);
       newLeaf->isLeaf = true; // New node is a leaf node.
 
-      // Copy all current keys (including new key to insert) to a temporary key list.
-      int tempKeyList[maxKeys + 1];
+      // Update nodes count
+      numNodes++;
+
+      // Copy all current keys and pointers (including new key to insert) to a temporary list.
+      float tempKeyList[maxKeys + 1];
+      Address tempPointerList[maxKeys + 1];
+
       for (int i = 0; i < maxKeys; i++)
       {
         tempKeyList[i] = cursor->keys[i];
+        tempPointerList[]
       }
 
       // Insert the new key into the temp key list, making sure that it remains sorted.

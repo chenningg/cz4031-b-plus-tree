@@ -34,6 +34,7 @@ private:
   Node *root;           // Pointer to root of the B+ Tree.
   int maxKeys;          // Maximum keys in a node.
   int levels;           // Number of levels in this B+ Tree.
+  int numNodes;         // Number of nodes in this B+ Tree.
   std::size_t nodeSize; // Size of a node = Size of block.
 
   // Methods
@@ -76,6 +77,11 @@ public:
   int getLevels()
   {
     return levels;
+  }
+
+  int getNumNodes()
+  {
+    return numNodes;
   }
 };
 
