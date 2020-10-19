@@ -354,14 +354,18 @@ void BPlusTree::insert(Address address, float key)
       float tempKeyList[maxKeys + 1];
       Address tempPointerList[maxKeys + 1];
 
-      for (int i = 0; i < maxKeys; i++)
+      int i = 0;
+      for (i = 0; i < maxKeys; i++)
       {
         tempKeyList[i] = cursor->keys[i];
-        tempPointerList[]
+        tempPointerList[i] = cursor->pointers[i];
       }
 
+      // Add the last pointer into the temp pointer list for good measure.
+      tempPointerList[i] = cursor->pointers[i];
+
       // Insert the new key into the temp key list, making sure that it remains sorted.
-      int i = 0;
+      i = 0;
       while (key > tempKeyList[i] && i < maxKeys)
       {
         i++;
