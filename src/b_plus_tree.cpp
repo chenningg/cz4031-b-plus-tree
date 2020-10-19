@@ -352,8 +352,12 @@ void BPlusTree::insert(Address address, float key)
 
       // Copy all current keys and pointers (including new key to insert) to a temporary list.
       float tempKeyList[maxKeys + 1];
+
+      // We only need to store pointers corresponding to records (ignore those that points to other nodes).
+      // Those that point to other nodes can be manipulated by themselves without this array later.
       Address tempPointerList[maxKeys + 1];
 
+      // Copy all keys and pointers to the temporary lists.
       int i = 0;
       for (i = 0; i < maxKeys; i++)
       {
@@ -361,25 +365,24 @@ void BPlusTree::insert(Address address, float key)
         tempPointerList[i] = cursor->pointers[i];
       }
 
-      // Add the last pointer into the temp pointer list for good measure.
-      tempPointerList[i] = cursor->pointers[i];
-
-      // Insert the new key into the temp key list, making sure that it remains sorted.
+      // Insert the new key into the temp key list, making sure that it remains sorted. Here, we find where to insert it.
       i = 0;
       while (key > tempKeyList[i] && i < maxKeys)
       {
         i++;
       }
 
-      // The key should be inserted at index i in the temp key list. Move all elements back.
-      for (int j = maxKeys + 1; j > i; j--)
+      // The key should be inserted at index i in the temporary lists. Move all elements back.
+      for (int j = maxKeys; j > i; j--)
       {
-        // Bubble swap all elements backwards by one index.
+        // Bubble swap all elements (keys and pointers) backwards by one index.
         tempKeyList[j] = tempKeyList[j - 1];
+        tempPointerList[j] = tempPointerList[j - 1];
       }
 
-      // Insert the new key into the temp key list.
+      // Insert the new key and pointer into the temporary lists.
       tempKeyList[i] = key;
+      tempPointerList[i] = address;
 
       // Split the two new nodes into two. ⌊(n+1)/2⌋ keys for left, n+1 - ⌊(n+1)/2⌋ (aka remaining) keys for right.
       cursor->numKeys = (maxKeys + 1) / 2;
@@ -399,30 +402,51 @@ void BPlusTree::insert(Address address, float key)
       // Now we need to deal with the rest of the keys and pointers.
       // Note that since we are at a leaf node, pointers point directly to records on disk.
 
-      for (i = cursor->numKeys; i < maxKeys + 1; i++)
-      {
-        cursor->pointers[i] = NULL;
-      }
-      for (i = 0; i < cursor->num_keys; i++)
+      // Add in keys and pointers in both the existing node, and the new leaf node.
+      // First, the existing node (cursor).
+      for (i = 0; i < cursor->numKeys; i++)
       {
         cursor->keys[i] = tempKeyList[i];
-      }
-      for (i = 0, j = cursor->num_keys; i < newLeaf->num_keys; i++, j++)
-      {
-        newLeaf->keys[i] = tempKeyList[j];
+        cursor->pointers[i] = tempPointerList[i];
       }
 
-      cursor->pointers[cursor->num_keys + 1] = newLeaf;
+      // Then, the new leaf node. Note we keep track of the i index, since we are using the remaining keys and pointers.
+      for (int j = 0; j < newLeaf->numKeys; i++, j++)
+      {
+        newLeaf->keys[j] = tempKeyList[i];
+        newLeaf->pointers[j] = tempPointerList[i];
+      }
+
+      // Now that we have finished updating the two new leaf nodes, we need to write them to disk.
+      memcpy(diskAddress, cursor, nodeSize);
+      memcpy(newLeafAddress.blockAddress, newLeaf, nodeSize);
+
+      // If we are at root (aka root == leaf), then we need to make a new parent root.
       if (cursor == root)
       {
-        Node *newRoot = new Node;
+        Node *newRoot = new Node(maxKeys);
+
+        // We need to set the new root's key to be the left bound of the right child.
         newRoot->keys[0] = newLeaf->keys[0];
-        newRoot->pointers[0] = cursor;
-        newRoot->pointers[1] = newLeaf;
-        newRoot->IS_LEAF = false;
-        newRoot->num_keys = 1;
+
+        // Point the new root's children to the existing node and the new node.
+        newRoot->pointers[0] = {diskAddress, 0};
+        newRoot->pointers[1] = newLeafAddress;
+
+        // Update new root's variables.
+        newRoot->isLeaf = false;
+        newRoot->numKeys = 1;
         root = newRoot;
+
+        // Add new node and level to the tree.
+        numNodes++;
+        levels++;
+
+        // Write the new root node to disk.
+        Address newRootAddress = index->allocate(nodeSize);
+        memcpy(newRootAddress.blockAddress, root, nodeSize);
       }
+      // If we are not at the root, we need to insert a new parent in the middle levels of the tree.
       else
       {
         insertInternal(newLeaf->keys[0], parent, newLeaf);
