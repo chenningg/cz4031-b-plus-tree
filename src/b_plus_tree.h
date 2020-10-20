@@ -45,7 +45,7 @@ private:
 
   // Finds the direct parent of a node in the B+ Tree.
   // Takes in root and a node to find parent for, returns parent's disk address.
-  Node *findParent(Node *, Node *);
+  Node *findParent(Node *, Node *, float lowerBoundKey);
 
 public:
   // Methods
@@ -54,7 +54,7 @@ public:
   BPlusTree(std::size_t blockSize);
 
   // Search for keys corresponding to a range in the B+ Tree given a lower and upper bound. Returns a list of matching Records.
-  std::vector<Record> select(float lowerBoundKey, float upperBoundKey);
+  std::vector<Record> search(float lowerBoundKey, float upperBoundKey);
 
   // Inserts a record into the B+ Tree.
   void insert(Address address, float key);
