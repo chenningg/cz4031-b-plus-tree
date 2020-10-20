@@ -32,7 +32,7 @@ class BPlusTree
 private:
   // Variables
   MemoryPool *index;    // Pointer to a memory pool in disk for index.
-  Node *root;           // Pointer to root of the B+ Tree in main memory.
+  Node *root;           // Pointer to the main memory root (if it's loaded).
   void *rootAddress;    // Pointer to root's address on disk.
   int maxKeys;          // Maximum keys in a node.
   int levels;           // Number of levels in this B+ Tree.
