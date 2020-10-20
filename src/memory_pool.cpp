@@ -111,4 +111,31 @@ bool MemoryPool::deallocate(void *blockAddress, short int offset, std::size_t si
   };
 }
 
+// Give a block address, offset and size, returns the data there.
+void *MemoryPool::loadFromDisk(Address address, std::size_t size)
+{
+  void *mainMemoryAddress = operator new(size);
+  std::memcpy(mainMemoryAddress, address.blockAddress + address.offset, size);
+
+  // Update blocks accessed
+  blocksAccessed++;
+
+  return mainMemoryAddress;
+}
+
+// Saves something into the disk. Returns disk address.
+Address MemoryPool::saveToDisk(void *itemAddress, std::size_t size)
+{
+  Address diskAddress = allocate(size);
+  std::memcpy(diskAddress.blockAddress + diskAddress.offset, itemAddress, size);
+  return diskAddress;
+}
+
+// Update data in disk if I have already saved it before.
+Address MemoryPool::saveToDisk(void *itemAddress, std::size_t size, Address diskAddress)
+{
+  std::memcpy(diskAddress.blockAddress + diskAddress.offset, itemAddress, size);
+  return diskAddress;
+}
+
 MemoryPool::~MemoryPool(){};

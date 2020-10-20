@@ -30,6 +30,7 @@ class BPlusTree
 {
 private:
   // Variables
+  MemoryPool *disk;     // Pointer to a memory pool for data blocks.
   MemoryPool *index;    // Pointer to a memory pool in disk for index.
   Node *root;           // Pointer to the main memory root (if it's loaded).
   void *rootAddress;    // Pointer to root's address on disk.
@@ -51,13 +52,16 @@ public:
   // Methods
 
   // Constructor, takes in block size to determine max keys/pointers in a node.
-  BPlusTree(std::size_t blockSize);
+  BPlusTree(std::size_t blockSize, MemoryPool *disk);
 
   // Search for keys corresponding to a range in the B+ Tree given a lower and upper bound. Returns a list of matching Records.
-  std::vector<Record> search(float lowerBoundKey, float upperBoundKey);
+  void search(float lowerBoundKey, float upperBoundKey);
 
   // Inserts a record into the B+ Tree.
   void insert(Address address, float key);
+
+  // Inserts a record into a linked list. Returns the address of the new linked list head (if any).
+  Address insertLL(Address LLHead, Address address, float key);
 
   // Prints out the B+ Tree in the console.
   void display(Node *, int level);
@@ -67,6 +71,11 @@ public:
 
   // Prints out a data block and its contents in the disk.
   void displayBlock(void *block);
+
+  // Prints out an entire linked list's records.
+  void displayLL(Address LLHeadAddress);
+
+  // Deletes
 
   // Getters and setters
 

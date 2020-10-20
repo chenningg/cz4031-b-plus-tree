@@ -85,3 +85,36 @@ void BPlusTree::display(Node *cursorDiskAddress, int level)
     }
   }
 }
+
+void BPlusTree::displayLL(Address LLHeadAddress)
+{
+  // Load linked list head into main memory.
+  Node *head = (Node *)index->loadFromDisk(LLHeadAddress, nodeSize);
+
+  // Print all records in the linked list.
+  if (head == nullptr)
+  {
+    std::cerr << "\nEnd of linked list!\n";
+  }
+  else
+  {
+    for (int i = 0; i < head->numKeys; i++)
+    {
+      // Load the block from disk.
+      Record result = *(Record *)(disk->loadFromDisk(head->pointers[i], sizeof(Record)));
+      std::cerr << result.tconst << " | ";
+    }
+
+    // Print empty slots
+    for (int i = head->numKeys; i < maxKeys; i++)
+    {
+      std::cerr << "x | ";
+    }
+
+    // Move to next node in linked list.
+    if (head->pointers[head->numKeys].blockAddress != nullptr)
+    {
+      displayLL(head->pointers[head->numKeys]);
+    }
+  }
+}

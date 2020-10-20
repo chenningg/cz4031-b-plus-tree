@@ -27,6 +27,15 @@ public:
   // Deallocates an existing record and block if block becomes empty. Returns false if error.
   bool deallocate(void *blockAddress, short int offset, std::size_t sizeToDelete);
 
+  // Give a block address, offset and size, returns the data there.
+  void *loadFromDisk(Address address, std::size_t size);
+
+  // Save data to the disk given a main memory address.
+  Address saveToDisk(void *itemAddress, std::size_t size);
+
+  // Update data in disk if I have already saved it before.
+  Address saveToDisk(void *itemAddress, std::size_t size, Address diskAddress);
+
   // Returns the maximum size of this memory pool.
   std::size_t getMaxPoolSize() const
   {
@@ -63,6 +72,18 @@ public:
     return allocated;
   };
 
+  int getBlocksAccessed() const
+  {
+    return blocksAccessed;
+  }
+
+  int resetBlocksAccessed()
+  {
+    int tempBlocksAccessed = blocksAccessed;
+    blocksAccessed = 0;
+    return tempBlocksAccessed;
+  }
+
   // Destructor
   ~MemoryPool();
 
@@ -75,7 +96,8 @@ private:
   std::size_t actualSizeUsed; // Actual size used based on records stored in storage.
   std::size_t blockSizeUsed;  // Size used up within the curent block we are pointing to.
 
-  int allocated; // Number of currently allocated blocks.
+  int allocated;      // Number of currently allocated blocks.
+  int blocksAccessed; // Counts number of blocks accessed.
 
   void *pool;  // Pointer to the memory pool.
   void *block; // Current block pointer we are inserting to.
