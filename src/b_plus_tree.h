@@ -14,7 +14,6 @@ private:
   // Variables
   Address *pointers;      // A pointer to an array of struct {void *blockAddress, short int offset} containing other nodes in disk.
   float *keys;            // Pointer to an array of keys in this node.
-  Address *parent;        // A pointer to the parent of this node in the disk.
   int numKeys;            // Current number of keys in this node.
   bool isLeaf;            // Whether this node is a leaf node.
   friend class BPlusTree; // Let the BPlusTree class access this class' private variables.
