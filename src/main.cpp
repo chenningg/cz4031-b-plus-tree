@@ -15,7 +15,7 @@ using namespace std;
 int main()
 {
   // Create memory pools for the disk.
-  MemoryPool disk(350000000, 100);
+  // MemoryPool disk(350000000, 100);
 
   // // =============================================================
   // // Experiment 1:
@@ -138,12 +138,24 @@ int main()
   // // - The root node and its child nodes of the updated B + tree;
   // // =============================================================
 
+<<<<<<< Updated upstream
   cout << "bpt_test" << endl;
   bpt_test();
+=======
+  // cout << "bpt_test" << endl;
+  // bpt_test();
+
+  // cout << "\n\nbpt_2" << endl;
+  bpt_2();
+>>>>>>> Stashed changes
 
   cout << "\n\nbpt_2" << endl;
   bpt_2();
 
+<<<<<<< Updated upstream
   cout << sizeof(Address) << endl;
+=======
+  // b_plus_tree_test();
+>>>>>>> Stashed changes
   return 0;
 }

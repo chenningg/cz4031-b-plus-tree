@@ -4,7 +4,7 @@
 #include <cmath>
 
 using namespace std;
-int MAX_KEYS = 5;
+int MAX_KEYS = 3;
 
 // BP node
 class Node
@@ -30,10 +30,12 @@ private:
 
 public:
   BPTree();
-  void search(int);
   void insert(int);
   void remove(int);
+  Node *search(int, int);
+//   void searchRange(int, int);
   void display(Node *, int level);
+  void displayLL(Node *);
   Node *getRoot();
 };
 
@@ -52,134 +54,395 @@ BPTree::BPTree()
   root = NULL;
 }
 
+
+
 // Search operation
-void BPTree::search(int x)
+Node* BPTree::search(int lower, int upper)
 {
   if (root != NULL)
   {
-        Node *cursor = root;
-    while (!cursor->IS_LEAF)
-    {
-      for (int i = 0; i < cursor->num_keys; i++)
-      {
-        if (x < cursor->keys[i])
-        {
-          cursor = cursor->pointers[i];
-          break;
-        }
-        if (i == cursor->num_keys - 1)
-        {
-          cursor = cursor->pointers[i + 1];
-          break;
-        }
-      }
-    }
-    for (int i = 0; i < cursor->num_keys; i++)
-    {
-      if (cursor->keys[i] == x)
-      {
-        cout << "Found\n";
-        return;
-      }
-    }
-    cout << "Not found\n";
+	Node *cursor = root;
+
+	bool found = false;
+
+	// still within search range
+	while (lower <= upper && !found) {
+		// try and find the leaf node that should contain lower 
+		while (!cursor->IS_LEAF) {
+			for (int i = 0; i < cursor->num_keys; i++) {
+				if (lower < cursor->keys[i]) {
+					cursor = cursor->pointers[i];
+					break;
+				}
+				if (i == cursor->num_keys - 1) {
+					cursor = cursor->pointers[i + 1];
+					break;
+				}
+			}
+		}
+
+		
+		// check if lower is actually contained
+		for (int i = 0; i < cursor->num_keys; i++) {
+			// if leaf node contains lower
+			if (cursor->keys[i] == lower) {
+				cout << "\nFound: ";
+				found = true;
+				break;
+			} 
+		}
+
+		// lower not contained, increment until we hit lower > upper
+		if (!found) {
+			lower++;
+		}
+	}
+
+	if (lower > upper) {
+		cout << "Not found\n";
+		return NULL;
+	} 
+	else {
+		// find the index of lower inside this cursor that is guaranteed to contain lower 
+		int index;
+		for (int i = 0; i < cursor->num_keys; i++) {
+			if (cursor->keys[i] == lower) {
+				index = i;
+				break;
+			}
+		}
+
+		bool exceedRange = false;
+
+		// as long as we are still within range of the upper bound
+		while (!exceedRange) {
+			
+			// check if we have gone beyond upper. if we have, end this function 
+			if (cursor->keys[index] > upper) {
+				exceedRange = true;
+				break;
+			}
+			
+			displayLL(cursor->pointers[index]);
+			// we are at the last key already
+			if (index+1 == cursor->num_keys) {
+				// if there is no pointer from this bptree node to another leaf, end
+				if (cursor->pointers[cursor->num_keys] == NULL) {
+					exceedRange = true;
+					break;
+				} 
+				// else we move to the next leaf 
+				else {
+					cursor = cursor->pointers[cursor->num_keys];
+					index = 0;
+				}
+			}
+			// safe to increment index since we are still within the leaf node
+			else {
+				index++;
+			}
+
+
+		}
+
+		// while (cursor->keys[index] <= upper) {
+		// 	if (index==cursor->num_keys) {
+
+		// 	}
+
+		// 	else {
+		// 		displayLL(cursor->pointers[index]);
+		// 		index++;
+		// 	}
+		// }
+
+
+	}
   }
   else
   {
     cout << "Tree is empty\n";
+	return NULL;
   }
 }
+
+
+
+// // Search operation
+// Node* BPTree::search(int x)
+// {
+//   if (root != NULL)
+//   {
+// 	Node *cursor = root;
+//     while (!cursor->IS_LEAF)
+//     {
+//       for (int i = 0; i < cursor->num_keys; i++)
+//       {
+//         if (x < cursor->keys[i])
+//         {
+//           cursor = cursor->pointers[i];
+//           break;
+//         }
+//         if (i == cursor->num_keys - 1)
+//         {
+//           cursor = cursor->pointers[i + 1];
+//           break;
+//         }
+//       }
+//     }
+//     for (int i = 0; i < cursor->num_keys; i++)
+//     {
+//       if (cursor->keys[i] == x)
+//       {
+//         cout << "Found\n";
+//         return cursor;
+//       }
+//     }
+//     cout << "Not found\n";
+// 	return NULL;
+//   }
+//   else
+//   {
+//     cout << "Tree is empty\n";
+// 	return NULL;
+//   }
+// }
+
+
+// void BPTree::searchRange(int lower, int upper) {
+// 	// find the correct bptree node that contains a key that is >= lower
+// 	Node *cursor = NULL;
+// 	while (cursor == NULL) {
+// 		for (int i = lower; i <= upper; i++) {
+// 			cursor = search(i);
+// 		}
+// 	}
+	
+// 	// if no such node found
+// 	if (cursor == NULL) {
+// 		cout << "\nNo records found within this rating range";
+// 	} 
+	
+// 	// if there is a valid node found
+// 	else {
+// 		// find the index that the key falls within lower and upper
+// 		int index;
+
+// 		for (int i = 0; i < cursor->num_keys; i++) {
+// 			if (cursor->keys[i] >= lower) {
+// 				index = i;
+// 			}
+// 		}
+
+// 		// from this index up to the last key of this node
+// 		bool rangeExceed = false;
+
+// 		while (!rangeExceed) {
+// 			// check within this node
+// 			for (index; index < cursor->num_keys; index++) {				
+// 				if (cursor->keys[index] <= upper) {
+// 					cout << "\ncurrent cursor->keys[index] : " << cursor->keys[index];
+// 					displayLL(cursor->pointers[index]);
+// 				} else {
+// 					rangeExceed = true;
+// 					break;
+// 				}			
+// 			}
+
+// 			// need to move to next node since we haven't exceeded yet
+// 			if (cursor->pointers[cursor->num_keys] != NULL) {
+// 				cursor = cursor->pointers[cursor->num_keys];
+// 				index = 0;
+// 			} else {
+// 				rangeExceed = true;
+// 			}
+// 		}
+// 	}
+
+// 	return;
+// }
+
+
 
 // Insert Operation
 void BPTree::insert(int x)
 {
   if (root != NULL)
   {
-    Node *cursor = root;
-    Node *parent;
+	  Node *cursor = root;
+	  Node *parent;
 
-    while (cursor->IS_LEAF == false)
-    {
-      parent = cursor;
-      for (int i = 0; i < cursor->num_keys; i++)
-      {
-        if (x < cursor->keys[i])
-        {
-          cursor = cursor->pointers[i];
-          break;
-        }
-        if (i == cursor->num_keys - 1)
-        {
-          cursor = cursor->pointers[i + 1];
-          break;
-        }
-      }
+	  while (cursor->IS_LEAF == false)
+	  {
+		  parent = cursor;
+		  for (int i = 0; i < cursor->num_keys; i++)
+		  {
+			  if (x < cursor->keys[i])
+			  {
+				  cursor = cursor->pointers[i];
+				  break;
+			  }
+			  if (i == cursor->num_keys - 1)
+			  {
+				  cursor = cursor->pointers[i + 1];
+				  break;
+			  }
+		  }
     }
 
-
-    if (cursor->num_keys < MAX_KEYS)
+	if (cursor->num_keys < MAX_KEYS)
     {
-      int i = 0;
-      while (x > cursor->keys[i] && i < cursor->num_keys)
-        i++;
-      for (int j = cursor->num_keys; j > i; j--)
-      {
-        cursor->keys[j] = cursor->keys[j - 1];
-      }
-      cursor->keys[i] = x;
-      cursor->num_keys++;
-      cursor->pointers[cursor->num_keys] = cursor->pointers[cursor->num_keys - 1];
-      cursor->pointers[cursor->num_keys - 1] = NULL;
+		int i = 0;
+		while (x > cursor->keys[i] && i < cursor->num_keys)
+			i++;
+
+		// check if the identified position has a duplicate key value
+		if (cursor->keys[i] == x)
+		{	// duplicate key
+			// add onto the head of the linked list
+			if (cursor->pointers[i]->num_keys < MAX_KEYS)
+			{ // linked list head has space
+				for (int j = MAX_KEYS; j > 0; j--)
+				{
+					cursor->pointers[i]->pointers[j] = cursor->pointers[i]->pointers[j - 1];
+					cursor->pointers[i]->keys[j] = cursor->pointers[i]->keys[j - 1];
+				}
+				cursor->pointers[i]->keys[0] = x;
+				cursor->pointers[i]->pointers[0] = NULL; // the disk address of the key just inserted
+				cursor->pointers[i]->num_keys++;
+			}
+			else
+			{ // linked list head has no space, make new linked list node
+				Node *LLNode = new Node;
+				LLNode->IS_LEAF = false;
+				LLNode->keys[0] = x;
+				LLNode->num_keys = 1;
+				LLNode->pointers[0] = NULL;				   // the disk address of the key just inserted
+				LLNode->pointers[1] = cursor->pointers[i]; // the address of the previous leaf node put as the second pointer
+
+				cursor->pointers[i] = LLNode; // set the cursor to point to the new leaf node
+				cout << "\naddress of new head for LL for integer " << x << ": " << LLNode;
+			}
+	  } else { // new key 
+		for (int j = cursor->num_keys; j > i; j--)
+		{
+			cursor->keys[j] = cursor->keys[j - 1];
+		}
+		cursor->keys[i] = x;
+		cursor->num_keys++;
+		cursor->pointers[cursor->num_keys] = cursor->pointers[cursor->num_keys - 1];
+		cursor->pointers[cursor->num_keys - 1] = NULL;
+
+		// create a linked-list node for the leaf to link to
+		Node *LLNode = new Node;
+		LLNode->IS_LEAF = false;
+		LLNode->keys[0] = x;
+		LLNode->num_keys = 1;
+		LLNode->pointers[0] = NULL; // the disk address of the key just inserted
+
+		cursor->pointers[i] = LLNode;
+		cout << "\naddress of LL for integer " << x << ": " << LLNode;
+	  }
+
     }
 
     else
     {
-      Node *newLeaf = new Node;
-      int tempKeyList[MAX_KEYS + 1];
-      for (int i = 0; i < MAX_KEYS; i++)
-      {
-        tempKeyList[i] = cursor->keys[i];
-      }
-      int i = 0, j;
-      while (x > tempKeyList[i] && i < MAX_KEYS)
+	  int i = 0;
+      while (x > cursor->keys[i] && i < cursor->num_keys)
         i++;
-      for (int j = MAX_KEYS + 1; j > i; j--)
-      {
-        tempKeyList[j] = tempKeyList[j - 1];
-      }
-      tempKeyList[i] = x;
-      newLeaf->IS_LEAF = true;
-      cursor->num_keys = (MAX_KEYS + 1) / 2;
-      newLeaf->num_keys = MAX_KEYS + 1 - (MAX_KEYS + 1) / 2;
+	  
+	  // check if the identified position has a duplicate key value 
+	  if (cursor->keys[i] == x) { // duplicate key
+	  	// add onto the head of the linked list 
+		if (cursor->pointers[i]->num_keys < MAX_KEYS) { // linked list head has space
+			for (int j = cursor->pointers[i]->num_keys; j > 0; j--) {
+				cursor->pointers[i]->pointers[j] = cursor->pointers[i]->pointers[j-1];
+				cursor->pointers[i]->keys[j] = cursor->pointers[i]->keys[j - 1];
+			}
+			cursor->pointers[i]->keys[0] = x;
+			cursor->pointers[i]->pointers[0] = NULL; // the disk address of the key just inserted
+			cursor->pointers[i]->num_keys++;
 
-      for (i = cursor->num_keys; i < MAX_KEYS + 1; i++) {
-        cursor->pointers[i+1] = NULL;
-      }
-      for (i = 0; i < cursor->num_keys; i++)
-      {
-        cursor->keys[i] = tempKeyList[i];
-      }
-      for (i = 0, j = cursor->num_keys; i < newLeaf->num_keys; i++, j++)
-      {
-        newLeaf->keys[i] = tempKeyList[j];
-      }
-      cursor->pointers[cursor->num_keys] = newLeaf;
+		} else { // linked list head has no space, make new linked list node
+			Node *LLNode = new Node;
+			LLNode->IS_LEAF = false;
+			LLNode->keys[0] = x;
+			LLNode->num_keys = 1;
+			LLNode->pointers[0] = NULL; // the disk address of the key just inserted			
+			LLNode->pointers[1] = cursor->pointers[i]; // the address of the previous leaf node put as the second pointer
+			
+			cursor->pointers[i] = LLNode; // set the cursor to point to the new leaf node
+			cout << "\naddress of new head for LL for integer " << x << ": " << LLNode;
+		}
+	  } else { // new key 
+		Node *newLeaf = new Node;
 
-      if (cursor == root) {
-        Node *newRoot = new Node;
-        newRoot->keys[0] = newLeaf->keys[0];
-        newRoot->pointers[0] = cursor;
-        newRoot->pointers[1] = newLeaf;
-        newRoot->IS_LEAF = false;
-        newRoot->num_keys = 1;
-        for (int i = newRoot->num_keys; i < MAX_KEYS + 1; i++)
-        {
-          newRoot->pointers[i+1] = NULL;
-        }
-        root = newRoot;        
-      } else {
-        insertInternal(newLeaf->keys[0], parent, newLeaf);
-      }
+		int tempKeyList[MAX_KEYS + 1];
+		Node *tempPointerList[MAX_KEYS + 2];
+		for (int i = 0; i < MAX_KEYS; i++) {
+			tempKeyList[i] = cursor->keys[i];
+		}
+		for (int i = 0; i < MAX_KEYS + 1; i++) {
+			tempPointerList[i] = cursor->pointers[i];
+		}		
+		int i = 0, j;
+		while (x > tempKeyList[i] && i < MAX_KEYS)
+			i++;
+
+		for (int j = MAX_KEYS + 1; j > i; j--) {
+			tempKeyList[j] = tempKeyList[j - 1];
+		}
+		tempKeyList[i] = x;
+		for (int j = MAX_KEYS + 2; j > i + 1; j--) {
+			tempPointerList[j] = tempPointerList[j - 1];
+		}
+
+		Node *LLNode = new Node;
+		LLNode->IS_LEAF = false;
+		LLNode->keys[0] = x;
+		LLNode->num_keys = 1;
+		LLNode->pointers[0] = NULL; // the disk address of the key just inserted			
+		tempPointerList[i] = LLNode; // set the new LL to be in the sorted temp order of LL
+		cout << "\naddress of new head for LL for integer " << x << ": " << LLNode;
+
+		newLeaf->IS_LEAF = true;
+		cursor->num_keys = (MAX_KEYS + 1) / 2;
+		newLeaf->num_keys = MAX_KEYS + 1 - (MAX_KEYS + 1) / 2;
+
+		for (i = 0, j = cursor->num_keys; i < newLeaf->num_keys; i++, j++) {
+			newLeaf->keys[i] = tempKeyList[j];
+		}
+		for (i = 0, j = cursor->num_keys ; i < newLeaf->num_keys; i++, j++) {
+			newLeaf->pointers[i] = tempPointerList[j];
+		}		
+		cursor->pointers[cursor->num_keys] = newLeaf;
+
+		for (i = cursor->num_keys+1; i < MAX_KEYS+1; i++) {
+			cursor->pointers[i] = NULL;
+		}
+		for (i = newLeaf->num_keys; i < MAX_KEYS+1; i++) {
+			newLeaf->pointers[i] = NULL;
+		}		
+
+		if (cursor == root) {
+			Node *newRoot = new Node;
+			newRoot->keys[0] = newLeaf->keys[0];
+			newRoot->pointers[0] = cursor;
+			newRoot->pointers[1] = newLeaf;
+			newRoot->IS_LEAF = false;
+			newRoot->num_keys = 1;
+			for (int i = newRoot->num_keys; i < MAX_KEYS + 1; i++)
+			{
+				newRoot->pointers[i + 1] = NULL;
+			}
+			root = newRoot;
+		}
+		else
+		{
+			insertInternal(newLeaf->keys[0], parent, newLeaf);
+		}
+	  }
     }
   }
   else
@@ -188,6 +451,16 @@ void BPTree::insert(int x)
     root->IS_LEAF = true;
     root->num_keys = 1;
     root->keys[0] = x;
+
+	// create a linked-list node for the leaf to link to
+	Node *LLNode = new Node;
+	LLNode->IS_LEAF = false;
+	LLNode->keys[0] = x;
+	LLNode->num_keys = 1;
+	LLNode->pointers[0] = NULL; // the disk address of the key just inserted
+
+	root->pointers[0] = LLNode;
+	cout << "\naddress of LL for integer " << x << ": " << LLNode;
   }
 }
 
@@ -235,6 +508,7 @@ void BPTree::insertInternal(int x, Node *cursor, Node *child)
       tempPointerList[j] = tempPointerList[j - 1];
     }
     tempPointerList[i + 1] = child;
+
     newInternal->IS_LEAF = false;
     cursor->num_keys = (MAX_KEYS + 1) / 2;
     newInternal->num_keys = MAX_KEYS - (MAX_KEYS + 1) / 2;
@@ -725,47 +999,65 @@ void BPTree::removeInternal(int x, Node* cursor, Node* child)
 // Print the tree
 void BPTree::display(Node *cursor, int level)
 {
-  if (cursor != NULL)
-  {
-    cout << cursor;
-    for (int i = 0; i < level; i++)
-    {
-      cout << "   ";
-    }
-    cout << " level " << level << ": ";
+	if (cursor != NULL)
+	{
+		cout << cursor;
+		for (int i = 0; i < level; i++)
+		{
+			cout << "   ";
+		}
+		cout << " level " << level << ": ";
 
-    for (int i = 0; i < cursor->num_keys; i++)
-    {
-      cout << cursor->keys[i] << " ";
-    }
+		for (int i = 0; i < cursor->num_keys; i++)
+		{
+			cout << cursor->keys[i] << " ";
+		}
 
-    for (int i = cursor->num_keys; i < MAX_KEYS; i++)
-    {
-      cout << "x ";
-    }
+		for (int i = cursor->num_keys; i < MAX_KEYS; i++)
+		{
+			cout << "x ";
+		}
 
-    for (int i = 0; i < MAX_KEYS + 1; i++)
-    {
-      if (cursor->pointers[i] == NULL)
-      {
-        cout << "|       |";
-      }
-      else
-      {
-        cout << cursor->pointers[i] << " ";
-      }
-    }
+		for (int i = 0; i < MAX_KEYS + 1; i++)
+		{
+			if (cursor->pointers[i] == NULL)
+			{
+				cout << "|       |";
+			}
+			else
+			{
+				cout << cursor->pointers[i] << " ";
+			}
+		}
 
-    cout << "\n";
-    if (cursor->IS_LEAF != true)
-    {
-      for (int i = 0; i < cursor->num_keys + 1; i++)
-      {
-        display(cursor->pointers[i], level + 1);
-      }
-    }
+		cout << "\n";
+		if (cursor->IS_LEAF != true)
+		{
+			for (int i = 0; i < cursor->num_keys + 1; i++)
+			{
+				display(cursor->pointers[i], level + 1);
+			}
+		}
   }
 }
+
+void BPTree::displayLL(Node *head) {
+	if (head == NULL) {
+		cout << "\nNo linked list\n";
+	}
+	else {
+		for (int i = 0; i < head->num_keys; i++) {
+			cout << head->keys[i] << " ";
+		}
+		for (int i = head->num_keys; i < MAX_KEYS; i++) {
+			cout << "x ";
+		}
+		if (head->pointers[head->num_keys] != NULL) {
+			displayLL(head->pointers[head->num_keys]);
+		}
+	}
+}
+
 
 // Get the root
 Node *BPTree::getRoot()
@@ -775,31 +1067,84 @@ Node *BPTree::getRoot()
 
 int bpt_2()
 {
-  BPTree node;
+	BPTree node;
 
-  cout << "Hello";
+	node.insert(1);
+	node.insert(1);
+	node.insert(1);
+	node.insert(1);
+	node.search(1, 1);
 
-  cout << "bye";
-  // for (int i = 1; i < 22; i++)
-  // {
-  //   node.insert(i);
-  // }
-  for (int i = 5; i < 10; i++) {
-    for (int j = 0; j < 3; j++) {
-        node.insert(i);
-    }
-  }
+	node.insert(2);
+	node.insert(2);
+	node.search(2, 2);
 
-  // node.display(node.getRoot(), 1);
+	node.insert(3);
+	node.insert(3);
+	node.search(3, 3);
 
-  // node.remove(4);
-  // node.display(node.getRoot(), 1);
-  node.remove(6);
-  node.display(node.getRoot(), 1);
-  node.remove(6);
-  node.display(node.getRoot(), 1);
-  node.remove(7);
-  node.display(node.getRoot(), 1);
-  node.remove(8);
-  node.display(node.getRoot(), 1);
+	node.insert(4);
+	node.insert(4);
+	node.insert(4);
+	node.insert(4);
+	node.insert(4);
+	node.insert(4);
+	node.insert(4);
+	node.search(4, 4);
+
+	for (int i = 5; i < 27; i++) {
+		node.insert(i);
+		node.search(i, i);
+	}
+
+	for (int i = 5; i < 29; i++) {
+		node.insert(i);
+	}
+
+	for (int i = 60; i < 70; i++) {
+		node.insert(i);
+	}
+
+
+	// node.insert(25);
+	// node.insert(25);
+	// node.insert(25);
+	// node.insert(25);
+	// node.insert(25);
+
+	// node.insert(28);
+	// node.insert(28);
+	// node.insert(30);
+	for (int i = 1; i < 29;i++)
+	{
+		node.search(i, i);
+	};
+
+
+	node.search(17, 100);
+
+	// node.searchRange(21, 21);
+	// node.search(21, 21);
+	// node.displayLL(node.getRoot(), 1, 29); // need to handle things that are not in the tree 
+
+	cout << "\n\n";
+	node.display(node.getRoot(), 1);
+
+
+
+	cout << "\n\n";
+	// node.displayLL(node.search(29));
+
+	// cout << "\n";
+	// node.remove(6);
+	// node.display(node.getRoot(), 1);
+	// cout << "\n";
+	// node.remove(6);
+	// node.display(node.getRoot(), 1);
+	// cout << "\n";
+	// node.remove(7);
+	// node.display(node.getRoot(), 1);
+	// cout << "\n";
+	// node.remove(8);
+	// node.display(node.getRoot(), 1);
 }
