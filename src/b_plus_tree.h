@@ -42,10 +42,11 @@ private:
   // Methods
 
   // Updates the parent node to point at both child nodes, and adds a parent node if needed.
-  void insertInternal(float lowerBound, Node *cursor, Node *cursorDiskAddress, Node *newChild, Node *newChildDiskAddress);
+  void insertInternal(float key, Node *cursorDiskAddress, Node *childDiskAddress);
 
   // Finds the direct parent of a node in the B+ Tree.
-  // Node *findParent(Node *, Node *);
+  // Takes in root and a node to find parent for, returns parent's disk address.
+  Node *findParent(Node *, Node *);
 
 public:
   // Methods
