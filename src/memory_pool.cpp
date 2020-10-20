@@ -40,8 +40,6 @@ bool MemoryPool::allocateBlock()
 
     allocated += 1;
 
-    std::cout << "------- New block allocated! -------" << '\n';
-
     return true;
   }
   else
@@ -79,8 +77,6 @@ Address MemoryPool::allocate(std::size_t sizeRequired)
   // Return the new memory space to put in the record.
   Address recordAddress = {block, offset};
 
-  std::cout << "Allocating " << recordAddress.blockAddress << '\n';
-
   return recordAddress;
 }
 
@@ -115,7 +111,4 @@ bool MemoryPool::deallocate(void *blockAddress, short int offset, std::size_t si
   };
 }
 
-MemoryPool::~MemoryPool()
-{
-  delete pool;
-};
+MemoryPool::~MemoryPool(){};
