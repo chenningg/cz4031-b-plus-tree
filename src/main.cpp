@@ -150,10 +150,9 @@ int main()
   // bpt_test();
 
   // cout << "\n\nbpt_2" << endl;
-  // bpt_2();
+  bpt_2();
 
   // cout << sizeof(Address) << endl;
-
-  b_plus_tree_test();
+  // b_plus_tree_test();
   return 0;
 }
