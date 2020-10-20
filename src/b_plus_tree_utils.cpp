@@ -304,30 +304,3 @@ Node *BPlusTree::findParent(Node *cursorDiskAddress, Node *childDiskAddress, flo
   // If we reach here, means cannot find already.
   return nullptr;
 }
-
-// // Iterate through all keys to find child.
-// for (int i = 0; i < cursor->numKeys + 1; i++)
-// {
-//   // Check if pointer exists
-//   if (cursor->pointers[i].blockAddress == nullptr)
-//   {
-//     return nullptr;
-//   }
-//   // Check if any pointers match the child's disk address we are looking for.
-//   else if (cursor->pointers[i].blockAddress == childDiskAddress)
-//   {
-//     // If it matches, then we have found the parent.
-//     return parentDiskAddress;
-//   }
-//   // If don't match, we need to recursively search children.
-//   else
-//   {
-//     // Load the child from disk and pass in its main memory address.
-//     std::cerr << "Now going to:" << (Node *)(cursor->pointers[i].blockAddress) << endl;
-//     parentDiskAddress = findParent((Node *)(cursor->pointers[i].blockAddress), childDiskAddress);
-//     if (parentDiskAddress != nullptr)
-//     {
-//       return parentDiskAddress;
-//     }
-//   }
-// }

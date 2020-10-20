@@ -24,7 +24,7 @@ Node::Node(int maxKeys)
   this->numKeys = 0;
 }
 
-BPlusTree::BPlusTree(std::size_t blockSize)
+BPlusTree::BPlusTree(std::size_t blockSize, MemoryPool *disk)
 {
   // Get size left for keys and pointers in a node after accounting for node's isLeaf and numKeys attributes.
   size_t nodeBufferSize = blockSize - sizeof(bool) - sizeof(int);
@@ -59,25 +59,47 @@ BPlusTree::BPlusTree(std::size_t blockSize)
   levels = 0;
   numNodes = 0;
 
-  // Initialize disk space for index.
+  // Initialize disk space for index and set reference to disk.
   index = new MemoryPool(200000000, 100);
+  this->disk = disk;
 }
 
 void b_plus_tree_test()
 {
   // Create memory pools for the disk.
-  BPlusTree tree = BPlusTree(100);
-  std::cerr << "Max keys: " << tree.getMaxKeys() << endl;
-
   MemoryPool *test = new MemoryPool(300000000, 100);
 
-  for (int i = 1; i < 20; i++)
+  BPlusTree tree = BPlusTree(100, test);
+  std::cerr << "Max keys: " << tree.getMaxKeys() << endl;
+
+  for (int i = 1; i < 7; i++)
   {
-    Record record = {"tt000001", 1.0, 80};
-    Address addr = test->allocate(sizeof(record));
-    std::memcpy(addr.blockAddress, &record, sizeof(record));
+    Record record1 = {"tt000001", 1.0, 80};
+    Address addr = test->saveToDisk(&record1, sizeof(Record));
+    tree.insert(addr, float(i));
+  }
+
+  for (int i = 1; i < 7; i++)
+  {
+    Record record1 = {"tt000002", 2.0, 80};
+    Address addr = test->saveToDisk(&record1, sizeof(Record));
+    tree.insert(addr, float(i));
+  }
+
+  for (int i = 1; i < 7; i++)
+  {
+    Record record1 = {"tt000003", 3.0, 80};
+    Address addr = test->saveToDisk(&record1, sizeof(Record));
+    tree.insert(addr, float(i));
+  }
+
+  for (int i = 1; i < 7; i++)
+  {
+    Record record1 = {"tt000004", 3.0, 80};
+    Address addr = test->saveToDisk(&record1, sizeof(Record));
     tree.insert(addr, float(i));
   }
 
   tree.display(tree.getRoot(), 1);
+  tree.search(float(2), float(6));
 }
