@@ -2,6 +2,7 @@
 #include "b_plus_tree.h"
 #include "bpt.h"
 #include "bpt_2.h"
+#include "chuanxin.h"
 
 #include <iostream>
 #include <fstream>
@@ -150,7 +151,8 @@ int main()
   // bpt_test();
 
   // cout << "\n\nbpt_2" << endl;
-  bpt_2();
+  // bpt_2();
+  chuanxin();
 
   // cout << sizeof(Address) << endl;
   // b_plus_tree_test();
