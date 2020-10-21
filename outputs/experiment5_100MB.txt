@@ -1,0 +1,23 @@
+=====================================Experiment 5==========================================
+Deleting those movies with the attribute averageRating equal to 7...
+End of linked list
+Successfully deleted 7
+B+ Tree after deletion
+Number of times that a node is deleted (or two nodes are merged): 0
+Number of nodes in updated B+ Tree --- 112
+Height of updated B+ tree --- 4
+
+    level 1: |0x9db9408 | 5.9 | 0x9dbadd0| x |  Null  | x |  Null  | x |  Null  | x |  Null  | x |  Null  | x |  Null  |
+       level 2: |0x9db9084 | 3.6 | 0x9dbb474 | 4 | 0x9db9ef8 | 4.4 | 0x9db9b10 | 5 | 0x9db991c | 5.4 | 0x9db9728| x |  Null  | x |  Null  |
+          level 3: |0x9db9d68 | 2.8 | 0x9dbb410 | 3.2 | 0x9dba4d4 | 3.4 | 0x9db9dcc | 3.5 | 0x9dbb474| x |  Null  | x |  Null  | x |  Null  |
+          level 3: |0x9db9f5c | 3.6 | 0x9db9a48 | 3.7 | 0x9dbb154 | 3.8 | 0x9db9e94 | 3.9 | 0x9db9ef8| x |  Null  | x |  Null  | x |  Null  |
+          level 3: |0x9db9ca0 | 4 | 0x9dbafc4 | 4.1 | 0x9db9854 | 4.2 | 0x9dbb6cc | 4.3 | 0x9db9b10| x |  Null  | x |  Null  | x |  Null  |
+          level 3: |0x9dba538 | 4.4 | 0x9dbb2e4 | 4.5 | 0x9dbb5a0 | 4.6 | 0x9dbaf60 | 4.7 | 0x9dbb4d8 | 4.8 | 0x9dbb85c | 4.9 | 0x9db991c| x |  Null  |
+          level 3: |0x9dbb280 | 5 | 0x9dbb0f0 | 5.1 | 0x9dbb7f8 | 5.2 | 0x9dbb53c | 5.3 | 0x9db9728| x |  Null  | x |  Null  | x |  Null  |
+          level 3: |0x9dbb924 | 5.4 | 0x9dbb668 | 5.5 | 0x9dbb21c | 5.6 | 0x9dbbb18 | 5.7 | 0x9dbb9ec | 5.8 | 0x9db93a4| x |  Null  | x |  Null  |
+       level 2: |0x9db93a4 | 6.6 | 0x9db9bd8 | 7.1 | 0x9dba72c | 7.5 | 0x9dbad6c| x |  Null  | x |  Null  | x |  Null  | x |  Null  |
+          level 3: |0x9dbaa4c | 5.9 | 0x9dbb8c0 | 6 | 0x9dbb08c | 6.1 | 0x9dbb988 | 6.2 | 0x9dbb794 | 6.3 | 0x9dbb3ac | 6.4 | 0x9dbb1b8 | 6.5 | 0x9db9bd8|
+          level 3: |0x9dbbb7c | 6.6 | 0x9dbb604 | 6.7 | 0x9dba2e0 | 6.8 | 0x9db946c | 6.9 | 0x9dba72c | 7.4 | 0| x |  Null  | x |  Null  |
+          level 3: |0x9db95fc | 7.1 | 0x9dbaab0 | 7.2 | 0x9dba920 | 7.3 | 0x9db9534 | 7.4 | 0x9dbad6c| x |  Null  | x |  Null  | x |  Null  |
+          level 3: |0x9dba6c8 | 7.5 | 0x9db9e30 | 7.6 | 0x9dbb348 | 7.8 | 0x9dbbab4 | 7.9 | 0x9dbba50 | 8 | 0x9dbab14 | 8.1 | 0x9dbad08 | 8.2 | 0|
+

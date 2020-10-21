@@ -107,6 +107,12 @@ int main()
       std::cout <<"6. Exit "<<endl;
       cin >> choice;
       if(int(choice)==1){
+
+        // save experiment1 logging
+        ofstream out("../outputs/experiment1_" + to_string(BLOCKSIZE) + "MB.txt");
+        streambuf *coutbuf = std::cout.rdbuf(); //save old buffer
+        std::cout.rdbuf(out.rdbuf());           //redirect std::cout to filename.txt!
+
         // call experiment 1
         std::cout <<"=====================================Experiment 1=========================================="<<endl;
         std::cout << "Number of records per record block --- " << BLOCKSIZE / sizeof(Record) << endl;
@@ -120,11 +126,21 @@ int main()
         std::cout <<"Total number of blocks   : "<<disk.getAllocated() + index.getAllocated()<<endl;
         std::cout <<"Actual size of database : "<<disk.getActualSizeUsed() + index.getActualSizeUsed()<<endl;
         std::cout <<"Size of database (size of all blocks): "<<disk.getSizeUsed()+index.getSizeUsed()<<endl;
+        
+        // finish saving experiment1 logging
+        std::cout.rdbuf(coutbuf); //reset to standard output again
+
         std::cout <<"Press any integer to go back to menu"<<endl;
         cin >> choice;
         choice =0;
         continue;
       }else if(int(choice) == 2){
+
+        // save experiment2 logging
+        ofstream out("../outputs/experiment2_" + to_string(BLOCKSIZE) + "MB.txt");
+        streambuf *coutbuf = std::cout.rdbuf(); //save old buffer
+        std::cout.rdbuf(out.rdbuf());           //redirect std::cout to filename.txt!
+
         // call experiment 2
         std::cout <<"=====================================Experiment 2=========================================="<<endl;
         std::cout <<"Parameter n of the B+ tree    : "<<tree.getMaxKeys()<<endl;
@@ -133,11 +149,22 @@ int main()
         std::cout << "Root nodes and child nodes :"<<endl;
         tree.display(tree.getRoot(),1);
         std::cout <<endl;
+
+
+        // finish saving experiment2 logging
+        std::cout.rdbuf(coutbuf); //reset to standard output again
+
         std::cout <<"Enter any integer to go back to menu"<<endl;
         cin >> choice;
         choice =0;
         continue;
       }else if (int(choice) == 3){
+
+        // save experiment3 logging
+        ofstream out("../outputs/experiment3_" + to_string(BLOCKSIZE) + "MB.txt");
+        streambuf *coutbuf = std::cout.rdbuf(); //save old buffer
+        std::cout.rdbuf(out.rdbuf());           //redirect std::cout to filename.txt!
+
         // call experiment 3
         std::cout <<"=====================================Experiment 3=========================================="<<endl;
         std::cout <<"Retrieving the attribute tconst of those movies with averageRating equal to 8..."<<endl;
@@ -146,11 +173,21 @@ int main()
         std::cout <<"Attribute tconst of the records that are returned   : "<<endl;
         tree.search(8.0,8.0);
         std::cout << "\nNo more records found for range " << 8.0 << " to " << 8.0 << endl;
+        
+        // finish saving experiment3 logging
+        std::cout.rdbuf(coutbuf); //reset to standard output again        
+        
         std::cout <<"Enter any integer to go back to menu"<<endl;
         cin >> choice;
         choice =0;
         continue;
       }else if (int(choice) == 4){
+
+        // save experiment4 logging
+        ofstream out("../outputs/experiment4_" + to_string(BLOCKSIZE) + "MB.txt");
+        streambuf *coutbuf = std::cout.rdbuf(); //save old buffer
+        std::cout.rdbuf(out.rdbuf());           //redirect std::cout to filename.txt!
+
         // call experiment 4
         std::cout <<"=====================================Experiment 4=========================================="<<endl;
         std::cout <<"Retrieving the attribute tconst of those movies with averageRating from 7 to 9 (inclusively)..."<<endl;
@@ -159,21 +196,25 @@ int main()
         std::cout <<"Attribute tconst of the records that are returned   : "<<endl;
         tree.search(7,9);
         std::cout <<endl;
+
+        // finish saving experiment4 logging
+        std::cout.rdbuf(coutbuf); //reset to standard output again
+
         std::cout <<"Enter any integer to go back to menu"<<endl;
         cin >> choice;
         choice =0;
         continue;
       }else if (int(choice) == 5){
+
+        // save experiment5 logging
+        ofstream out("../outputs/experiment5_" + to_string(BLOCKSIZE) + "MB.txt");
+        streambuf *coutbuf = std::cout.rdbuf(); //save old buffer
+        std::cout.rdbuf(out.rdbuf());           //redirect std::cout to filename.txt!
+
         // call experiment 5
         std::cout <<"=====================================Experiment 5=========================================="<<endl;
-        std::cout << "Original B+ Tree before deletion" << endl;
-        std::cout << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
-        std::cout << "Height of tree --- " << tree.getLevels() << endl;
-        std::cout << endl;
-        tree.display(tree.getRoot(), 1);
-        std::cout << endl;
         std::cout<<"Deleting those movies with the attribute averageRating equal to 7...\n";
-
+        
         tree.remove(7.0);
 
         std::cout << "B+ Tree after deletion" << endl;
@@ -183,6 +224,10 @@ int main()
         std::cout << endl;
         tree.display(tree.getRoot(), 1);
         std::cout << endl;
+
+        // finish saving experiment5 logging
+        std::cout.rdbuf(coutbuf); //reset to standard output again
+
         
         std::cout <<"Enter any integer to go back to menu"<<endl;
         cin >> choice;
@@ -196,73 +241,6 @@ int main()
         std::cout <<"Invalid input, input 1 to 6\n";
       }
     }
-
-  // std::cout << "\n\n================ TREEPRINT ================\n";
-  // tree.display(tree.getRoot(), 1);
-  // std::cout << "\n================ END OF REPORT ================\n\n";
-
-
-
-  // std::cout << "\n\n================ SIZE REPORT ================\n";
-  // std::cout << "Number of record blocks --- " << disk.getAllocated() << endl;
-  // std::cout << "Size of record blocks --- " << disk.getSizeUsed() << endl;
-  // std::cout << "Size of actual record data stored --- " << disk.getActualSizeUsed() << endl;
-  // std::cout << "Number of records per record block --- " << BLOCKSIZE / sizeof(Record) << endl;
-
-  // std::cout << endl;
-
-  // std::cout << "Number of index blocks --- " << index.getAllocated() << endl;
-  // std::cout << "Size of index blocks --- " << index.getSizeUsed() << endl;
-  // std::cout << "Size of actual index data stored --- " << index.getActualSizeUsed() << endl;
-  // std::cout << "Number of keys per index block --- " << tree.getMaxKeys() << endl;
-  // std::cout << "\n================ END OF REPORT ================\n\n";
-
-
-
-
-  // std::cout << "\n\n================ INSERT REPORT ================\n";
-  // std::cout << "Insertion complete " << endl;
-  // std::cout << "Record blocks accessed --- " << disk.resetBlocksAccessed() << endl;
-  // std::cout << "Index blocks accessed --- " << index.resetBlocksAccessed() << endl;
-  // std::cout << "\n================ END OF REPORT ================\n\n";
-
-
-
-
-
-
-
-  // std::cout << "\n\n================ SEARCH REPORT ================\n";
-  // tree.search(0, 10);  
-  // std::cout << "\nNo more records found for range " << 0 << " to " << 10 << endl;
-  // std::cout << "Record blocks accessed --- " << disk.resetBlocksAccessed() << endl;
-  // std::cout << "Index blocks accessed --- " << index.resetBlocksAccessed() << endl;
-  // std::cout << "\n================ END OF REPORT ================\n\n";
-
-
-
-  // std::cout << "\n\n================ DELETE REPORT ================\n";
-  // std::cout << "Original B+ Tree before deletion" << endl;
-  // std::cout << "Height of tree --- " << tree.getLevels() << endl;
-  // std::cout << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
-  // std::cout << endl;
-  // tree.display(tree.getRoot(), 1);
-  // std::cout << endl;
-
-  // tree.remove(7.0);  
-
-  // std::cout << "B+ Tree after deletion" << endl;
-  // std::cout << "Height of tree --- " << tree.getLevels() << endl;
-  // std::cout << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
-  // std::cout << endl;
-  // tree.display(tree.getRoot(), 1);
-  // std::cout << endl;
-  // std::cout << "\n================ END OF REPORT ================\n\n";
-
-
-  
-  
-
   return 0;
 }
 
