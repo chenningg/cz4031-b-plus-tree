@@ -24,6 +24,8 @@ MemoryPool::MemoryPool(std::size_t maxPoolSize, std::size_t blockSize)
   std::memset(pool, '\0', maxPoolSize); // Initialize pool all to null.
   this->block = nullptr;
   this->blockSizeUsed = 0;
+
+  this->blocksAccessed = 0;
 }
 
 // Methods
@@ -128,6 +130,10 @@ Address MemoryPool::saveToDisk(void *itemAddress, std::size_t size)
 {
   Address diskAddress = allocate(size);
   std::memcpy((char *)diskAddress.blockAddress + diskAddress.offset, itemAddress, size);
+
+  // Update blocks accessed
+  blocksAccessed++;
+
   return diskAddress;
 }
 
@@ -135,6 +141,10 @@ Address MemoryPool::saveToDisk(void *itemAddress, std::size_t size)
 Address MemoryPool::saveToDisk(void *itemAddress, std::size_t size, Address diskAddress)
 {
   std::memcpy((char *)diskAddress.blockAddress + diskAddress.offset, itemAddress, size);
+
+  // Update blocks accessed
+  blocksAccessed++;
+
   return diskAddress;
 }
 

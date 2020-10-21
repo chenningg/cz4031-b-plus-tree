@@ -32,20 +32,10 @@ void BPlusTree::insert(Address address, float key)
 
     // Write the root node into disk and track of root node's disk address.
     rootAddress = index->saveToDisk(root, nodeSize).blockAddress;
-
-    // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
-    // Update number of nodes and levels
-    // numNodes += 2;
-    // levels += 2; // Linked list counts as one level only FOREVER.
-    // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
   }
   // Else if root exists already, traverse the nodes to find the proper place to insert the key.
   else
   {
-    // Load in root from the disk
-    Address rootDiskAddress{rootAddress, 0};
-    root = (Node *)index->loadFromDisk(rootDiskAddress, nodeSize);
-
     Node *cursor = root;
     Node *parent;                          // Keep track of the parent as we go deeper into the tree in case we need to update it.
     void *parentDiskAddress = rootAddress; // Keep track of parent's disk address as well so we can update parent in disk.
@@ -140,7 +130,7 @@ void BPlusTree::insert(Address address, float key)
         // Update variables
         cursor->pointers[i] = LLNodeAddress;
         cursor->numKeys++;
-
+  
         // Update leaf node pointer link to next node
         cursor->pointers[cursor->numKeys] = next;
 
@@ -212,7 +202,7 @@ void BPlusTree::insert(Address address, float key)
         // Allocate LLNode into disk.
         Address LLNodeAddress = index->saveToDisk((void *)LLNode, nodeSize);
         tempPointerList[i] = LLNodeAddress;
-
+        
         newLeaf->isLeaf = true; // New node is a leaf node.
 
         // Split the two new nodes into two. ⌊(n+1)/2⌋ keys for left, n+1 - ⌊(n+1)/2⌋ (aka remaining) keys for right.
@@ -313,7 +303,7 @@ Address BPlusTree::insertLL(Address LLHead, Address address, float key)
     head->keys[0] = key;
     head->pointers[0] = address; // the disk address of the key just inserted
     head->numKeys++;
-
+    
     // Write head back to disk.
     LLHead = index->saveToDisk((void *)head, nodeSize, LLHead);
 

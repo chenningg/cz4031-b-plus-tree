@@ -8,7 +8,7 @@
 using namespace std;
 
 void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
-{
+{ 
   // Tree is empty.
   if (rootAddress == nullptr)
   {
@@ -66,7 +66,7 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
         if (cursor->keys[i] > upperBoundKey)
         {
           stop = true;
-          return;
+          break;
         }
         if (cursor->keys[i] >= lowerBoundKey && cursor->keys[i] <= upperBoundKey)
         {
@@ -79,8 +79,8 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
         }
       }
 
-      // On the last pointer, check if last key is max, if it is, stop.
-      if (cursor->pointers[cursor->numKeys].blockAddress != nullptr)
+      // On the last pointer, check if last key is max, if it is, stop. Also stop if it is already equal to the max
+      if (cursor->pointers[cursor->numKeys].blockAddress != nullptr && cursor->keys[i] != upperBoundKey)
       {
         // Set cursor to be next leaf node (load from disk).
         cursor = (Node *)index->loadFromDisk(cursor->pointers[cursor->numKeys], nodeSize);
@@ -90,8 +90,6 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
         stop = true;
       }
     }
-
-    std::cerr << "\nNo more records found for range " << lowerBoundKey << " to " << upperBoundKey << endl;
-    return;
   }
+  return;
 }
