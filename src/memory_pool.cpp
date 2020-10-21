@@ -35,7 +35,7 @@ bool MemoryPool::allocateBlock()
   {
     // Update variables
     sizeUsed += blockSize;
-    block = pool + allocated * blockSize; // Set current block pointer to new block.
+    block = (char *)pool + allocated * blockSize; // Set current block pointer to new block.
     blockSizeUsed = 0;                    // Reset offset to 0.
 
     allocated += 1;
@@ -59,7 +59,7 @@ Address MemoryPool::allocate(std::size_t sizeRequired)
   }
 
   // If no current block, or record can't fit into current block, make a new block.
-  if (allocated == 0 || blockSizeUsed + sizeRequired > blockSize)
+  if (allocated == 0 || (blockSizeUsed + sizeRequired > blockSize))
   {
     bool isSuccessful = allocateBlock();
     if (!isSuccessful)
@@ -85,7 +85,7 @@ bool MemoryPool::deallocate(Address address, std::size_t sizeToDelete)
   try
   {
     // Remove record from block.
-    void *addressToDelete = address.blockAddress + address.offset;
+    void *addressToDelete = (char *)address.blockAddress + address.offset;
     std::memset(addressToDelete, '\0', sizeToDelete);
 
     // Update actual size used.
@@ -115,7 +115,7 @@ bool MemoryPool::deallocate(Address address, std::size_t sizeToDelete)
 void *MemoryPool::loadFromDisk(Address address, std::size_t size)
 {
   void *mainMemoryAddress = operator new(size);
-  std::memcpy(mainMemoryAddress, address.blockAddress + address.offset, size);
+  std::memcpy(mainMemoryAddress, (char *)address.blockAddress + address.offset, size);
 
   // Update blocks accessed
   blocksAccessed++;
@@ -127,14 +127,14 @@ void *MemoryPool::loadFromDisk(Address address, std::size_t size)
 Address MemoryPool::saveToDisk(void *itemAddress, std::size_t size)
 {
   Address diskAddress = allocate(size);
-  std::memcpy(diskAddress.blockAddress + diskAddress.offset, itemAddress, size);
+  std::memcpy((char *)diskAddress.blockAddress + diskAddress.offset, itemAddress, size);
   return diskAddress;
 }
 
 // Update data in disk if I have already saved it before.
 Address MemoryPool::saveToDisk(void *itemAddress, std::size_t size, Address diskAddress)
 {
-  std::memcpy(diskAddress.blockAddress + diskAddress.offset, itemAddress, size);
+  std::memcpy((char *)diskAddress.blockAddress + diskAddress.offset, itemAddress, size);
   return diskAddress;
 }
 

@@ -325,14 +325,17 @@ Address BPlusTree::insertLL(Address LLHead, Address address, float key)
   // Check if the head node has space to put record.
   if (head->numKeys < maxKeys)
   {
+
     // Move all keys back to insert at the head.
     for (int i = head->numKeys; i > 0; i--)
     {
       head->keys[i] = head->keys[i - 1];
     }
 
+
     // Move all pointers back to insert at the head.
     for (int i = head->numKeys + 1; i > 0; i--)
+
     {
       head->pointers[i] = head->pointers[i - 1];
     }

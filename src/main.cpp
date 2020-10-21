@@ -1,7 +1,6 @@
 #include "memory_pool.h"
 #include "b_plus_tree.h"
-#include "bpt.h"
-#include "bpt_2.h"
+#include "types.h"
 
 #include <iostream>
 #include <fstream>
@@ -11,12 +10,14 @@
 #include <vector>
 #include <unordered_map>
 
+
+
 using namespace std;
 
 int main()
 {
   // Create memory pools for the disk.
-  // MemoryPool db(100000, 100);
+  MemoryPool db(100000, 100);
 
   // =============================================================
   // Experiment 1:
@@ -24,54 +25,74 @@ int main()
   // - The number of blocks;
   // - The size of database;
   // =============================================================
+  MemoryPool *test = new MemoryPool(300000000, 100);
+  // MemoryPool test(300000000, 100);
 
-  // // Create a list of all addresses
-  // std::vector<Address> records;
+  BPlusTree tree = BPlusTree(100, test);
+  std::cerr << "Max keys: " << tree.getMaxKeys() << endl;
+  // Create a list of all addresses
+  std::vector<Address> records;
 
-  // // Open test data
-  // std::ifstream file("../../data/testdata.tsv");
+  // Open test data
+  std::ifstream file("../data/testdata.tsv");
 
-  // // Insert data into database and populate list of addresses
-  // if (file.is_open())
-  // {
-  //   std::string line;
-  //   int recordNum = 0;
-  //   while (std::getline(file, line))
-  //   {
-  //     Record temp;
-  //     stringstream linestream(line);
-  //     string data;
+  // Insert data into database and populate list of addresses
+  if (file.is_open())
+  {
+    std::string line;
+    int recordNum = 0;
+    while (std::getline(file, line))
+    {
+      //temporary struct Record 
+      Record temp;
+      stringstream linestream(line);
+      string data;
+      //assigning temp.tconst value
+      strcpy(temp.tconst, line.substr(0, line.find("\t")).c_str());
 
-  //     strcpy(temp.tconst, line.substr(0, line.find("\t")).c_str());
+      std::getline(linestream, data, '\t');
+      //assigning temp.averageRating & temp.numVotes values
+      linestream >> temp.averageRating >> temp.numVotes;
+      
+      //Database storage Address allocation
+      // Address record = db.allocate(sizeof(temp));
 
-  //     std::getline(linestream, data, '\t');
-  //     linestream >> temp.averageRating >> temp.numVotes;
+      // Add it to list of addresses
+      // records.push_back(record);
 
-  //     Address record = db.allocate(sizeof(temp));
+      // Add to database
+      // memcpy((char *)record.blockAddress + record.offset, &temp, sizeof(temp));
 
-  //     // Add it to list of addresses
-  //     records.push_back(record);
 
-  //     // Add to database
-  //     memcpy(record.blockAddress + record.offset, &temp, sizeof(temp));
+      // cout << "Inserted record " << recordNum + 1 << " at address: " << record.blockAddress << '\n';
 
-  //     cout << "Inserted record " << recordNum + 1 << " at address: " << record.blockAddress << '\n';
+      
+      Address addr = test->saveToDisk(&temp, sizeof(Record));
+      tree.insert(addr, float(temp.averageRating));
+      recordNum += 1;
+    }
+    file.close();
+    // cout << "Number of blocks used: " << db.getAllocated() << " blocks" << '\n';
+    // cout << "Actual size used: " << db.getActualSizeUsed() << " bytes" << '\n';
+    // cout << "Total size occupied: " << db.getSizeUsed() << " bytes" << '\n';
 
-  //     recordNum += 1;
-  //   }
-  //   file.close();
-  // };
 
-  // for (int i = 0; i < records.size(); i++)
-  // {
-  //   Record record = *(Record *)(records[i].blockAddress + records[i].offset);
-  //   cout << record.tconst << endl;
-  //   ;
-  // }
+    // tree.display(tree.getRoot(), 1);
+    cout<<"recordNum: "<<recordNum<<'\n';
+    cout<<"max Keys: "<<tree.getMaxKeys()<<'\n';
+    cout<<"tree levels: "<<tree.getLevels()<<'\n';
+    cout<<"number of nodes: "<<tree.getNumNodes()<<'\n';
 
-  // cout << "Number of blocks used: " << db.getAllocated() << " blocks" << '\n';
-  // cout << "Actual size used: " << db.getActualSizeUsed() << " bytes" << '\n';
-  // cout << "Total size occupied: " << db.getSizeUsed() << " bytes" << '\n';
+    for (int i = 0; i < 101; i++) {
+      tree.search(float(i)/10, float(i)/10);
+    }
+    // tree.search(float(3.1), float(3.1));
+    
+  };
+
+  
+  
+
 
   // // =============================================================
   // // Experiment 2:
@@ -153,6 +174,7 @@ int main()
   // bpt_2();
 
   // cout << sizeof(Address) << endl;
-  b_plus_tree_test();
+  
+  // b_plus_tree_test();
   return 0;
 }
