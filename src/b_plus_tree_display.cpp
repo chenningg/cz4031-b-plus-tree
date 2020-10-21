@@ -105,7 +105,7 @@ void BPlusTree::displayLL(Address LLHeadAddress)
   // End of linked list
   if (head->pointers[head->numKeys].blockAddress == nullptr)
   {
-    std::cerr << "End of linked list" << endl;
+    std::cerr << "End of linked list";
     return;
   }
 

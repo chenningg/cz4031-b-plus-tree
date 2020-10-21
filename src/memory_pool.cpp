@@ -102,6 +102,7 @@ bool MemoryPool::deallocate(Address address, std::size_t sizeToDelete)
     if (memcmp(testBlock, address.blockAddress, blockSize) == 0)
     {
       sizeUsed -= blockSize;
+      allocated -= 1;
     }
 
     return true;
