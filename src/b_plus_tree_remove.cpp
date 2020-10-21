@@ -662,7 +662,7 @@ void BPlusTree::removeLL(Address LLHeadAddress)
   // End of linked list
   if (head->pointers[head->numKeys].blockAddress == nullptr)
   {
-    std::cout << "End of linked list" << endl;
+    std::cout << "End of linked list";
     return;
   }
 

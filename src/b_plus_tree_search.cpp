@@ -21,6 +21,10 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
     Address rootDiskAddress{rootAddress, 0};
     root = (Node *)index->loadFromDisk(rootDiskAddress, nodeSize);
 
+    // for displaying to output file
+    std::cout << "Index node accessed. Content is -----";
+    displayNode(root);
+
     Node *cursor = root;
 
     bool found = false;
@@ -36,6 +40,11 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
         {
           // Load node from disk to main memory.
           cursor = (Node *)index->loadFromDisk(cursor->pointers[i], nodeSize);
+
+          // for displaying to output file
+          std::cout << "Index node accessed. Content is -----";
+          displayNode(cursor);
+
           break;
         }
         // If we reached the end of all keys in this node (larger than all), then go to the right pointer's node to continue searching.
@@ -44,6 +53,10 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
           // Load node from disk to main memory.
           // Set cursor to the child node, now loaded in main memory.
           cursor = (Node *)index->loadFromDisk(cursor->pointers[i + 1], nodeSize);
+
+          // for displaying to output file
+          std::cout << "Index node accessed. Content is -----";
+          displayNode(cursor);
           break;
         }
       }
@@ -70,9 +83,13 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
         }
         if (cursor->keys[i] >= lowerBoundKey && cursor->keys[i] <= upperBoundKey)
         {
+          // for displaying to output file
+          std::cout << "Index node (LLNode) accessed. Content is -----";
+          displayNode(cursor);
+
           // Add new line for each leaf node's linked list printout.
           std::cout << endl;
-          std::cout << "tconst for average rating: " << cursor->keys[i] << " > ";
+          std::cout << "LLNode: tconst for average rating: " << cursor->keys[i] << " > ";          
 
           // Access the linked list node and print records.
           displayLL(cursor->pointers[i]);
@@ -84,6 +101,11 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
       {
         // Set cursor to be next leaf node (load from disk).
         cursor = (Node *)index->loadFromDisk(cursor->pointers[cursor->numKeys], nodeSize);
+
+        // for displaying to output file
+        std::cout << "Index node accessed. Content is -----";
+        displayNode(cursor);
+
       }
       else
       {
