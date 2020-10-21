@@ -23,18 +23,26 @@ int main()
   
   // Create memory pools for the disk and the index, total 500MB
   std::cerr << "creating the disk on the stack for records, index" << endl;
-  MemoryPool disk(100000, 100); // MemoryPool disk(250000000, 100);  
-  MemoryPool index(100000, 100); // MemoryPool index(250000000, 100);
+  int BLOCKSIZE = 100; // in bytes
+  MemoryPool disk(100000, BLOCKSIZE);  
+  MemoryPool index(100000, BLOCKSIZE);  
+  // MemoryPool disk(150000000, BLOCKSIZE);  
+  // MemoryPool index(350000000, BLOCKSIZE);
 
   // Creating the tree 
-  BPlusTree tree = BPlusTree(100, &disk, &index);
+  BPlusTree tree = BPlusTree(BLOCKSIZE, &disk, &index);
   std::cerr << "Max keys for a B+ tree node: " << tree.getMaxKeys() << endl;
 
+  // Reset the number of blocks accessed to zero
+  disk.resetBlocksAccessed();
+  index.resetBlocksAccessed();
+  std::cerr << "Number of record blocks accessed in search operation reset to: 0" << endl;
+  std::cerr << "Number of index blocks accessed in search operation reset to: 0" << endl;    
 
 
-  
   // Open test data
   std::ifstream file("../data/testdata.tsv");
+  // std::ifstream file("../data/data.tsv");
 
   // Insert data into database and populate list of addresses
   if (file.is_open())
@@ -66,20 +74,80 @@ int main()
       recordNum += 1;
     }
     file.close();
-    // cout << "Number of blocks used: " << disk.getAllocated() << " blocks" << '\n';
-    // cout << "Actual size used: " << disk.getActualSizeUsed() << " bytes" << '\n';
-    // cout << "Total size occupied: " << disk.getSizeUsed() << " bytes" << '\n';
 
-    tree.display(tree.getRoot(), 1);
-    cout<<"recordNum: "<<recordNum<<'\n';
-    cout<<"max Keys: "<<tree.getMaxKeys()<<'\n';
-    cout<<"tree levels: "<<tree.getLevels()<<'\n';
-    cout<<"number of nodes: "<<tree.getNumNodes()<<'\n';
-
-    for (int i = 0; i < 101; i++) {
-      tree.search(float(i)/10, float(i)/10);
-    }
+    // tree.display(tree.getRoot(), 1);
+    // cout<<"recordNum: "<<recordNum<<'\n';
+    // cout<<"max Keys: "<<tree.getMaxKeys()<<'\n';
+    // cout<<"tree levels: "<<tree.getLevels()<<'\n';
+    // cout<<"number of nodes: "<<tree.getNumNodes()<<'\n';
   }
+  // cout << "Number of blocks used: " << disk.getAllocated() << " blocks" << '\n';
+  // cout << "Actual size used: " << disk.getActualSizeUsed() << " bytes" << '\n';
+  // cout << "Total size occupied: " << disk.getSizeUsed() << " bytes" << '\n';
+
+
+  std::cerr << "\n\n================ TREEPRINT ================\n";
+  tree.display(tree.getRoot(), 1);
+  std::cerr << "\n================ END OF REPORT ================\n\n";
+
+
+
+  std::cerr << "\n\n================ SIZE REPORT ================\n";
+  std::cerr << "Number of record blocks --- " << disk.getAllocated() << endl;
+  std::cerr << "Size of record blocks --- " << disk.getSizeUsed() << endl;
+  std::cerr << "Size of actual record data stored --- " << disk.getActualSizeUsed() << endl;
+  std::cerr << "Number of records per record block --- " << BLOCKSIZE / sizeof(Record) << endl;
+
+  std::cerr << endl;
+
+  std::cerr << "Number of index blocks --- " << index.getAllocated() << endl;
+  std::cerr << "Size of index blocks --- " << index.getSizeUsed() << endl;
+  std::cerr << "Size of actual index data stored --- " << index.getActualSizeUsed() << endl;
+  std::cerr << "Number of keys per index block --- " << tree.getMaxKeys() << endl;
+  std::cerr << "\n================ END OF REPORT ================\n\n";
+
+
+
+
+  std::cerr << "\n\n================ INSERT REPORT ================\n";
+  std::cerr << "Insertion complete " << endl;
+  std::cerr << "Record blocks accessed --- " << disk.resetBlocksAccessed() << endl;
+  std::cerr << "Index blocks accessed --- " << index.resetBlocksAccessed() << endl;
+  std::cerr << "\n================ END OF REPORT ================\n\n";
+
+
+
+
+
+
+
+  std::cerr << "\n\n================ SEARCH REPORT ================\n";
+  tree.search(0, 10);  
+  std::cerr << "\nNo more records found for range " << 0 << " to " << 10 << endl;
+  std::cerr << "Record blocks accessed --- " << disk.resetBlocksAccessed() << endl;
+  std::cerr << "Index blocks accessed --- " << index.resetBlocksAccessed() << endl;
+  std::cerr << "\n================ END OF REPORT ================\n\n";
+
+
+
+  std::cerr << "\n\n================ DELETE REPORT ================\n";
+  std::cerr << "Original B+ Tree before deletion" << endl;
+  std::cerr << "Height of tree --- " << tree.getLevels() << endl;
+  std::cerr << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
+  std::cerr << endl;
+  tree.display(tree.getRoot(), 1);
+  std::cerr << endl;
+
+  tree.remove(7.0);  
+
+  std::cerr << "B+ Tree after deletion" << endl;
+  std::cerr << "Height of tree --- " << tree.getLevels() << endl;
+  std::cerr << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
+  std::cerr << endl;
+  tree.display(tree.getRoot(), 1);
+  std::cerr << endl;
+  std::cerr << "\n================ END OF REPORT ================\n\n";
+
 
   // call experiment 2
   // call experiment 3

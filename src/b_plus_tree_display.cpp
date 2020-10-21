@@ -89,13 +89,6 @@ void BPlusTree::displayLL(Address LLHeadAddress)
   Node *head = (Node *)index->loadFromDisk(LLHeadAddress, nodeSize);
 
   // Print all records in the linked list.
-  // End of linked list
-  if (head->pointers[head->numKeys].blockAddress == nullptr)
-  {
-    std::cerr << "End of linked list" << endl;
-    return;
-  }
-
   for (int i = 0; i < head->numKeys; i++)
   {
     // Load the block from disk.
@@ -107,6 +100,13 @@ void BPlusTree::displayLL(Address LLHeadAddress)
   for (int i = head->numKeys; i < maxKeys; i++)
   {
     std::cerr << "x | ";
+  }
+  
+  // End of linked list
+  if (head->pointers[head->numKeys].blockAddress == nullptr)
+  {
+    std::cerr << "End of linked list";
+    return;
   }
 
   // Move to next node in linked list.
