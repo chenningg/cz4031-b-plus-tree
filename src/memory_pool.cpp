@@ -80,12 +80,12 @@ Address MemoryPool::allocate(std::size_t sizeRequired)
   return recordAddress;
 }
 
-bool MemoryPool::deallocate(void *blockAddress, short int offset, std::size_t sizeToDelete)
+bool MemoryPool::deallocate(Address address, std::size_t sizeToDelete)
 {
   try
   {
     // Remove record from block.
-    void *addressToDelete = blockAddress + offset;
+    void *addressToDelete = address.blockAddress + address.offset;
     std::memset(addressToDelete, '\0', sizeToDelete);
 
     // Update actual size used.
@@ -93,11 +93,11 @@ bool MemoryPool::deallocate(void *blockAddress, short int offset, std::size_t si
 
     // If block is empty, just remove the size of the block (but don't deallocate block!).
     // Create a new test block full of NULL to test against the actual block to see if it's empty.
-    unsigned char testBlock[sizeToDelete];
-    memset(testBlock, '\0', sizeToDelete);
+    unsigned char testBlock[blockSize];
+    memset(testBlock, '\0', blockSize);
 
     // Block is empty, remove size of block.
-    if (memcmp(testBlock, blockAddress, sizeToDelete) == 0)
+    if (memcmp(testBlock, address.blockAddress, blockSize) == 0)
     {
       sizeUsed -= blockSize;
     }
