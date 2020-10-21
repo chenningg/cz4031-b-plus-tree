@@ -14,76 +14,85 @@ using namespace std;
 
 int main()
 {
-  // // Create memory pools for the disk.
-  // MemoryPool db(100000, 100);
+  // =============================================================
+  // Experiment 1:
+  // Store the data (which is about IMDb movives and described in Part 4) on the disk and report the following statistics:
+  // - The number of blocks;
+  // - The size of database;
+  // =============================================================
+  
+  // Create memory pools for the disk and the index, total 500MB
+  std::cerr << "creating the disk on the stack for records, index" << endl;
+  MemoryPool disk(100000, 100); // MemoryPool disk(250000000, 100);  
+  MemoryPool index(100000, 100); // MemoryPool index(250000000, 100);
 
-  // // =============================================================
-  // // Experiment 1:
-  // // Store the data (which is about IMDb movives and described in Part 4) on the disk and report the following statistics:
-  // // - The number of blocks;
-  // // - The size of database;
-  // // =============================================================
-  // MemoryPool *test = new MemoryPool(300000000, 100);
-  // // MemoryPool test(300000000, 100);
+  // Creating the tree 
+  BPlusTree tree = BPlusTree(100, &disk, &index);
+  std::cerr << "Max keys for a B+ tree node: " << tree.getMaxKeys() << endl;
 
-  // BPlusTree tree = BPlusTree(100, test);
-  // std::cerr << "Max keys: " << tree.getMaxKeys() << endl;
-  // // Create a list of all addresses
-  // std::vector<Address> records;
 
-  // // Open test data
-  // std::ifstream file("../data/testdata.tsv");
 
-  // // Insert data into database and populate list of addresses
-  // if (file.is_open())
-  // {
-  //   std::string line;
-  //   int recordNum = 0;
-  //   while (std::getline(file, line))
-  //   {
-  //     //temporary struct Record
-  //     Record temp;
-  //     stringstream linestream(line);
-  //     string data;
-  //     //assigning temp.tconst value
-  //     strcpy(temp.tconst, line.substr(0, line.find("\t")).c_str());
+  
+  // Open test data
+  std::ifstream file("../data/testdata.tsv");
 
-  //     std::getline(linestream, data, '\t');
-  //     //assigning temp.averageRating & temp.numVotes values
-  //     linestream >> temp.averageRating >> temp.numVotes;
+  // Insert data into database and populate list of addresses
+  if (file.is_open())
+  {
+    std::string line;
+    int recordNum = 0;
+    while (std::getline(file, line))
+    {
+      //temporary struct Record
+      Record temp;
+      stringstream linestream(line);
+      string data;
 
-  //     //Database storage Address allocation
-  //     // Address record = db.allocate(sizeof(temp));
+      //assigning temp.tconst value
+      strcpy(temp.tconst, line.substr(0, line.find("\t")).c_str());
+      std::getline(linestream, data, '\t');
 
-  //     // Add it to list of addresses
-  //     // records.push_back(record);
+      //assigning temp.averageRating & temp.numVotes values
+      linestream >> temp.averageRating >> temp.numVotes;
 
-  //     // Add to database
-  //     // memcpy((char *)record.blockAddress + record.offset, &temp, sizeof(temp));
+      //insert this record into the database
+      Address tempAddress = disk.saveToDisk(&temp, sizeof(Record));
 
-  //     // cout << "Inserted record " << recordNum + 1 << " at address: " << record.blockAddress << '\n';
+      //build the bplustree as we insert records
+      tree.insert(tempAddress, float(temp.averageRating));
 
-  //     Address addr = test->saveToDisk(&temp, sizeof(Record));
-  //     tree.insert(addr, float(temp.averageRating));
-  //     recordNum += 1;
-  //   }
-  //   file.close();
-  //   // cout << "Number of blocks used: " << db.getAllocated() << " blocks" << '\n';
-  //   // cout << "Actual size used: " << db.getActualSizeUsed() << " bytes" << '\n';
-  //   // cout << "Total size occupied: " << db.getSizeUsed() << " bytes" << '\n';
+      //logging
+      cout << "Inserted record " << recordNum + 1 << " at block address: " << &tempAddress.blockAddress << " and offset " << &tempAddress.offset << endl;
+      recordNum += 1;
+    }
+    file.close();
+    // cout << "Number of blocks used: " << disk.getAllocated() << " blocks" << '\n';
+    // cout << "Actual size used: " << disk.getActualSizeUsed() << " bytes" << '\n';
+    // cout << "Total size occupied: " << disk.getSizeUsed() << " bytes" << '\n';
 
-  //   // tree.display(tree.getRoot(), 1);
-  //   cout<<"recordNum: "<<recordNum<<'\n';
-  //   cout<<"max Keys: "<<tree.getMaxKeys()<<'\n';
-  //   cout<<"tree levels: "<<tree.getLevels()<<'\n';
-  //   cout<<"number of nodes: "<<tree.getNumNodes()<<'\n';
+    tree.display(tree.getRoot(), 1);
+    cout<<"recordNum: "<<recordNum<<'\n';
+    cout<<"max Keys: "<<tree.getMaxKeys()<<'\n';
+    cout<<"tree levels: "<<tree.getLevels()<<'\n';
+    cout<<"number of nodes: "<<tree.getNumNodes()<<'\n';
 
-  //   for (int i = 0; i < 101; i++) {
-  //     tree.search(float(i)/10, float(i)/10);
-  //   }
-  //   // tree.search(float(3.1), float(3.1));
+    for (int i = 0; i < 101; i++) {
+      tree.search(float(i)/10, float(i)/10);
+    }
+  }
 
-  // };
+  // call experiment 2
+  // call experiment 3
+  // call experiment 4
+  // call experiment 5
+
+  // call experiment 1-5 with 500B block size
+  
+
+  return 0;
+}
+
+
 
   // // // =============================================================
   // // // Experiment 2:
@@ -157,15 +166,3 @@ int main()
   // // // - The height of the updated B + tree;
   // // // - The root node and its child nodes of the updated B + tree;
   // // // =============================================================
-
-  // // cout << "bpt_test" << endl;
-  // // bpt_test();
-
-  // // cout << "\n\nbpt_2" << endl;
-  // // bpt_2();
-
-  // // cout << sizeof(Address) << endl;
-
-  b_plus_tree_test();
-  return 0;
-}

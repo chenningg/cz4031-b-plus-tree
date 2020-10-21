@@ -20,13 +20,15 @@ Node::Node(int maxKeys)
 
   for (int i = 0; i < maxKeys + 1; i++)
   {
+    // Address nullAddress{NULL, 0};
+    // pointers[i] = nullAddress;
     Address nullAddress{(void *)myNullPtr, 0};
     pointers[i] = nullAddress;
   }
   numKeys = 0;
 }
 
-BPlusTree::BPlusTree(std::size_t blockSize, MemoryPool *disk)
+BPlusTree::BPlusTree(std::size_t blockSize, MemoryPool *disk, MemoryPool *index)
 {
   // Get size left for keys and pointers in a node after accounting for node's isLeaf and numKeys attributes.
   size_t nodeBufferSize = blockSize - sizeof(bool) - sizeof(int);
@@ -62,37 +64,7 @@ BPlusTree::BPlusTree(std::size_t blockSize, MemoryPool *disk)
   numNodes = 0;
 
   // Initialize disk space for index and set reference to disk.
-  index = new MemoryPool(200000000, 100);
+  
   this->disk = disk;
-}
-
-void b_plus_tree_test()
-{
-  // Create memory pools for the disk.
-  MemoryPool *test = new MemoryPool(300000000, 100);
-
-  BPlusTree tree = BPlusTree(100, test);
-  std::cerr << "Max keys: " << tree.getMaxKeys() << endl;
-
-  for (int i = 0; i < 30; i++)
-  {
-    for (int j = 0; j < 7; j++)
-    {
-      Record record{"tt0000001", 5.0, 2111};
-      Address address = test->saveToDisk(&record, sizeof(Record));
-      tree.insert(address, float(j));
-    }
-  }
-
-  tree.remove(float(2));
-  tree.remove(float(100));
-
-  tree.search(float(100), float(100));
-
-  tree.search(float(0), float(10));
-  tree.display(tree.getRoot(), 1);
-
-  // tree.remove(float(2));
-  // tree.display(tree.getRoot(), 1);
-  // tree.search(float(2), float(4));
+  this->index = index;
 }
