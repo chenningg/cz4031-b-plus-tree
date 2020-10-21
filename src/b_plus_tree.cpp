@@ -72,16 +72,24 @@ void b_plus_tree_test()
   BPlusTree tree = BPlusTree(100, test);
   std::cerr << "Max keys: " << tree.getMaxKeys() << endl;
 
+
   for (int i = 1; i < 7; i++)
   {
-    Record record1 = {"tt000001", 1.0, 80};
+    Record record1 = {"tt00000", 1.0, 80};
     Address addr = test->saveToDisk(&record1, sizeof(Record));
     tree.insert(addr, float(i));
   }
 
   for (int i = 1; i < 7; i++)
   {
-    Record record1 = {"tt000002", 2.0, 80};
+    Record record1 = {"tt000001", 2.0, 80};
+    Address addr = test->saveToDisk(&record1, sizeof(Record));
+    tree.insert(addr, float(i));
+  }
+
+  for (int i = 1; i < 7; i++)
+  {
+    Record record1 = {"tt000002", 3.0, 80};
     Address addr = test->saveToDisk(&record1, sizeof(Record));
     tree.insert(addr, float(i));
   }
@@ -92,13 +100,34 @@ void b_plus_tree_test()
     Address addr = test->saveToDisk(&record1, sizeof(Record));
     tree.insert(addr, float(i));
   }
-
   for (int i = 1; i < 7; i++)
   {
-    Record record1 = {"tt000004", 3.0, 80};
+    Record record1 = {"tt00004", 1.0, 80};
     Address addr = test->saveToDisk(&record1, sizeof(Record));
     tree.insert(addr, float(i));
   }
+
+  for (int i = 1; i < 7; i++)
+  {
+    Record record1 = {"tt000005", 2.0, 80};
+    Address addr = test->saveToDisk(&record1, sizeof(Record));
+    tree.insert(addr, float(i));
+  }
+
+  for (int i = 1; i < 7; i++)
+  {
+    Record record1 = {"tt000006", 3.0, 80};
+    Address addr = test->saveToDisk(&record1, sizeof(Record));
+    tree.insert(addr, float(i));
+  }
+
+  for (int i = 1; i < 7; i++)
+  {
+    Record record1 = {"tt000007", 3.0, 80};
+    Address addr = test->saveToDisk(&record1, sizeof(Record));
+    tree.insert(addr, float(i));
+  }
+
 
   tree.display(tree.getRoot(), 1);
   tree.search(float(2), float(6));
