@@ -229,8 +229,130 @@ void BPlusTree::insertInternal(float key, Node *cursorDiskAddress, Node *childDi
   }
 }
 
+// Takes in the parent disk address, the child address to delete, and removes the child.
 void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDiskAddress)
 {
+  // Load in cursor (parent) and child from disk to get latest copy.
+  Address cursorAddress{cursorDiskAddress, 0};
+  Node *cursor = (Node *)index->loadFromDisk(cursorAddress, nodeSize);
+
+  // Check if cursor is root via disk address.
+  if (cursorDiskAddress == rootAddress)
+  {
+    root = cursor;
+  }
+
+  // Get address of child to delete.
+  Address childAddress{childDiskAddress, 0};
+
+  // If current parent is root
+  if (cursor == root)
+  {
+    // If we have to remove all keys in root (as parent) we need to change the root to its child.
+    if (cursor->numKeys == 1)
+    {
+      // If the larger pointer points to child, make it the new root.
+      if (cursor->pointers[1].blockAddress == childDiskAddress)
+      {
+        // Delete the child completely
+        index->deallocate(childAddress, nodeSize);
+
+        // Set new root to be the parent's left pointer
+        // Load left pointer into main memory and update root.
+        root = (Node *)index->loadFromDisk(cursor->pointers[0], nodeSize);
+        rootAddress = (Node *)cursor->pointers[0].blockAddress;
+
+        // We can delete the old root (parent).
+        index->deallocate(cursorAddress, nodeSize);
+
+        // Nothing to save to disk. All updates happened in main memory.
+        std::cerr << "Root node changed." << endl;
+        return;
+      }
+      // Else if left pointer in root (parent) contains the child, delete from there.
+      else if (cursor->pointers[0].blockAddress == childDiskAddress)
+      {
+        // Delete the child completely
+        index->deallocate(childAddress, nodeSize);
+
+        // Set new root to be the parent's right pointer
+        // Load right pointer into main memory and update root.
+        root = (Node *)index->loadFromDisk(cursor->pointers[1], nodeSize);
+        rootAddress = (Node *)cursor->pointers[1].blockAddress;
+
+        // We can delete the old root (parent).
+        index->deallocate(cursorAddress, nodeSize);
+
+        // Nothing to save to disk. All updates happened in main memory.
+        std::cerr << "Root node changed." << endl;
+        return;
+      }
+    }
+  }
+
+  // If reach here, means parent is NOT the root.
+  // Aka we need to delete an internal node (possibly recursively).
+  int pos;
+
+  // Search for key to delete in parent based on child's lower bound key.
+  for (pos = 0; pos < cursor->numKeys; pos++)
+  {
+    if (cursor->keys[pos] == key)
+    {
+      break;
+    }
+  }
+
+  // Delete the key by shifting all keys forward
+  for (int i = pos; i < cursor->numKeys; i++)
+  {
+    cursor->keys[i] = cursor->keys[i + 1];
+  }
+
+  // Search for pointer to delete in parent
+  // Remember pointers are on the RIGHT for non leaf nodes.
+  for (pos = 0; pos < cursor->numKeys + 1; pos++)
+  {
+    if (cursor->pointers[pos].blockAddress == childDiskAddress)
+    {
+      break;
+    }
+  }
+
+  // Now move all pointers from that point on forward by one to delete it.
+  for (int i = pos; i < cursor->numKeys + 1; i++)
+  {
+    cursor->pointers[i] = cursor->pointers[i + 1];
+  }
+
+  // Update numKeys
+  cursor->numKeys--;
+
+  // ================== KIV!!!!!!!!!!!!!!!!================
+  // TODO: CHECK IS CHILD DELETED HERE? WHY NO CHILD DELETE?
+  // ================== KIV!!!!!!!!!!!!!!!!================
+
+  // Check if there's underflow in parent
+  // No underflow, life is good.
+  if (cursor->numKeys >= (maxKeys + 1) / 2 - 1)
+  {
+    std::cerr << "Deleted " << key << " from internal node." << endl;
+    return;
+  }
+
+  std::cerr << "internalDelete - Underflow in internal node!" << endl;
+
+  // If we reach here, means there's underflow in parent's keys.
+  // Try to steal some from neighbouring nodes.
+  // If we are the root, we are screwed. Just give up.
+  if (cursorDiskAddress == rootAddress)
+  {
+    return;
+  }
+
+  // If not, we need to find the parent of this parent to get our siblings.
+  // Pass in lower bound key of our child to search for it.
+  Node *parent = findParent((Node *)rootAddress, cursorDiskAddress, cursor->keys[0]);
 }
 
 // Find the parent of a node.
