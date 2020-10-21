@@ -106,7 +106,7 @@ bool MemoryPool::deallocate(Address address, std::size_t sizeToDelete)
   }
   catch (...)
   {
-    std::cout << "Error: Could not remove record/block at given address (" << blockAddress << ") and offset (" << offset << ")." << '\n';
+    std::cerr << "Error: Could not remove record/block at given address (" << address.blockAddress << ") and offset (" << address.offset << ")." << '\n';
     return false;
   };
 }
