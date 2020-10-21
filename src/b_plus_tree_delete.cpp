@@ -7,6 +7,8 @@
 
 using namespace std;
 
+bool a = 0;
+
 void BPlusTree::remove(float key)
 {
   // Tree is empty.
@@ -38,7 +40,7 @@ void BPlusTree::remove(float key)
       {
         // Keep track of left and right to borrow.
         leftSibling = i - 1;
-        rightSibling = i - 1;
+        rightSibling = i + 1;
 
         // If key is lesser than current key, go to the left pointer's node.
         if (key < cursor->keys[i])
@@ -205,6 +207,7 @@ void BPlusTree::remove(float key)
       // Check if we can steal (ahem, borrow) a key without underflow.
       if (rightNode->numKeys >= (maxKeys + 1) / 2 + 1)
       {
+
         // We will insert this borrowed key into the rightmost of current node (larger).
         // Shift last pointer back by one first.
         cursor->pointers[cursor->numKeys + 1] = cursor->pointers[cursor->numKeys];
@@ -314,24 +317,59 @@ void BPlusTree::removeLL(Address LLHeadAddress)
 {
   // Load in first node from disk.
   Node *head = (Node *)index->loadFromDisk(LLHeadAddress, nodeSize);
-  Node *curr = head;
-  Address currDiskAddress = LLHeadAddress;
 
   // Removing the current head. Simply deallocate the entire block since it is safe to do so for the linked list
   // Keep going down the list until no more nodes to deallocate.
-  while (curr->pointers[head->numKeys].blockAddress != nullptr)
+
+  // Deallocate the current node.
+  index->deallocate(LLHeadAddress, nodeSize);
+
+  // Move to next node
+
+  for (int i = 0; i < maxKeys + 1; i++)
   {
-    // Maintain a reference to the next node.
-    Node *next = (Node *)head->pointers[head->numKeys].blockAddress;
+    std::cerr << "|" << head->pointers[i].blockAddress << "|";
+  }
+  std::cerr << endl;
 
-    // Deallocate the current node.
-    index->deallocate(currDiskAddress, nodeSize);
-
-    // Move to next node
-    currDiskAddress.blockAddress = next;
-    curr = (Node *)index->loadFromDisk(currDiskAddress, nodeSize);
+  if (head->pointers[head->numKeys].blockAddress == nullptr)
+  {
+    std::cerr << "End of linked list" << endl;
+    return;
   }
 
-  // Deallocate curr if still have
-  index->deallocate(currDiskAddress, nodeSize);
+  std::cerr << "Going to: " << head->pointers[head->numKeys].blockAddress << endl;
+
+  if (head->pointers[head->numKeys].blockAddress != nullptr)
+  {
+
+    removeLL(head->pointers[head->numKeys]);
+  }
 }
+
+// try
+// {
+//   while (curr->pointers[curr->numKeys].blockAddress != nullptr)
+//   {
+
+//     // Maintain a reference to the next node.
+//     Node *next = (Node *)curr->pointers[curr->numKeys].blockAddress;
+
+//     // Deallocate the current node.
+//     index->deallocate(currDiskAddress, nodeSize);
+
+//     // Move to next node
+//     currDiskAddress.blockAddress = next;
+//     curr = (Node *)index->loadFromDisk(currDiskAddress, nodeSize);
+//     std::cerr << currDiskAddress.blockAddress << endl;
+//   }
+//   std::cout << "Hello";
+// }
+// catch (...)
+// {
+//   std::cerr << "HELP" << endl;
+// }
+
+// // Deallocate curr if still have
+// index->deallocate(currDiskAddress, nodeSize);
+// }
