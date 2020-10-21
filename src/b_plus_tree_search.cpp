@@ -71,8 +71,8 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
         if (cursor->keys[i] >= lowerBoundKey && cursor->keys[i] <= upperBoundKey)
         {
           // Add new line for each leaf node's linked list printout.
-          std::cerr << endl;
-          std::cerr << "tconst for average rating: " << cursor->keys[i] << " > ";
+          std::cout << endl;
+          std::cout << "tconst for average rating: " << cursor->keys[i] << " > ";
 
           // Access the linked list node and print records.
           displayLL(cursor->pointers[i]);

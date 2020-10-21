@@ -92,7 +92,7 @@ void BPlusTree::remove(float key)
     // If key to be deleted does not exist in the tree, return error.
     if (!found)
     {
-      std::cerr << "Can't find specified key " << key << " to delete!" << endl;
+      std::cout << "Can't find specified key " << key << " to delete!" << endl;
       return;
     }
 
@@ -126,7 +126,7 @@ void BPlusTree::remove(float key)
       if (cursor->numKeys == 0)
       {
         // Delete the entire root node and deallocate it.
-        std::cerr << "Congratulations! You deleted the entire index!" << endl;
+        std::cout << "Congratulations! You deleted the entire index!" << endl;
 
         // Deallocate block used to store root node.
         Address rootDiskAddress{rootAddress, 0};
@@ -137,7 +137,7 @@ void BPlusTree::remove(float key)
         rootAddress = nullptr;
         
       }
-      std::cerr << "Successfully deleted " << key << endl;
+      std::cout << "Successfully deleted " << key << endl;
       return;
     }
 
@@ -145,7 +145,7 @@ void BPlusTree::remove(float key)
     if (cursor->numKeys >= (maxKeys + 1) / 2)
     {
       // No underflow, so we're done.
-      std::cerr << "Successfully deleted " << key << endl;
+      std::cout << "Successfully deleted " << key << endl;
       return;
     }
 
@@ -354,7 +354,7 @@ void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDi
         index->deallocate(cursorAddress, nodeSize);
 
         // Nothing to save to disk. All updates happened in main memory.
-        std::cerr << "Root node changed." << endl;
+        std::cout << "Root node changed." << endl;
         return;
       }
       // Else if left pointer in root (parent) contains the child, delete from there.
@@ -372,7 +372,7 @@ void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDi
         index->deallocate(cursorAddress, nodeSize);
 
         // Nothing to save to disk. All updates happened in main memory.
-        std::cerr << "Root node changed." << endl;
+        std::cout << "Root node changed." << endl;
         return;
       }
     }
@@ -646,7 +646,7 @@ void BPlusTree::removeLL(Address LLHeadAddress)
   // End of linked list
   if (head->pointers[head->numKeys].blockAddress == nullptr)
   {
-    std::cerr << "End of linked list";
+    std::cout << "End of linked list";
     return;
   }
 
