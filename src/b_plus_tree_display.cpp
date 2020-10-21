@@ -14,8 +14,8 @@ void BPlusTree::displayNode(Node *node)
   std::cerr << "|";
   for (int i = 0; i < node->numKeys; i++)
   {
-    std::cerr << node->pointers[i].blockAddress << "|";
-    std::cerr << node->keys[i] << "|";
+    std::cerr << node->pointers[i].blockAddress << " | ";
+    std::cerr << node->keys[i] << " | ";
   }
 
   // Print last filled pointer
@@ -56,9 +56,8 @@ void BPlusTree::displayBlock(void *block)
 void BPlusTree::display(Node *cursorDiskAddress, int level)
 {
   // Load in cursor from disk.
-  void *cursorMainMemory = operator new(nodeSize);
-  std::memcpy(cursorMainMemory, cursorDiskAddress, nodeSize);
-  Node *cursor = (Node *)cursorMainMemory;
+  Address cursorMainMemoryAddress{cursorDiskAddress, 0};
+  Node *cursor = (Node *)index->loadFromDisk(cursorMainMemoryAddress, nodeSize);
 
   // If tree exists, display all nodes.
   if (cursor != nullptr)
@@ -71,14 +70,12 @@ void BPlusTree::display(Node *cursorDiskAddress, int level)
 
     displayNode(cursor);
 
-    std::cerr << "\n";
     if (cursor->isLeaf != true)
     {
       for (int i = 0; i < cursor->numKeys + 1; i++)
       {
         // Load node in from disk to main memory.
-        void *mainMemoryNode = operator new(nodeSize);
-        std::memcpy(mainMemoryNode, cursor->pointers[i].blockAddress, nodeSize);
+        Node *mainMemoryNode = (Node *)index->loadFromDisk(cursor->pointers[i], nodeSize);
 
         display((Node *)mainMemoryNode, level + 1);
       }
@@ -92,29 +89,29 @@ void BPlusTree::displayLL(Address LLHeadAddress)
   Node *head = (Node *)index->loadFromDisk(LLHeadAddress, nodeSize);
 
   // Print all records in the linked list.
-  if (head == nullptr)
+  // End of linked list
+  if (head->pointers[head->numKeys].blockAddress == nullptr)
   {
-    std::cerr << "\nEnd of linked list!\n";
+    std::cerr << "End of linked list" << endl;
+    return;
   }
-  else
+
+  for (int i = 0; i < head->numKeys; i++)
   {
-    for (int i = 0; i < head->numKeys; i++)
-    {
-      // Load the block from disk.
-      Record result = *(Record *)(disk->loadFromDisk(head->pointers[i], sizeof(Record)));
-      std::cerr << result.tconst << " | ";
-    }
+    // Load the block from disk.
+    Record result = *(Record *)(disk->loadFromDisk(head->pointers[i], sizeof(Record)));
+    std::cerr << result.tconst << " | ";
+  }
 
-    // Print empty slots
-    for (int i = head->numKeys; i < maxKeys; i++)
-    {
-      std::cerr << "x | ";
-    }
+  // Print empty slots
+  for (int i = head->numKeys; i < maxKeys; i++)
+  {
+    std::cerr << "x | ";
+  }
 
-    // Move to next node in linked list.
-    if (head->pointers[head->numKeys].blockAddress != nullptr)
-    {
-      displayLL(head->pointers[head->numKeys]);
-    }
+  // Move to next node in linked list.
+  if (head->pointers[head->numKeys].blockAddress != nullptr)
+  {
+    displayLL(head->pointers[head->numKeys]);
   }
 }

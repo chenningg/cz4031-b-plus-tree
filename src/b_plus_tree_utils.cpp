@@ -13,32 +13,16 @@ using namespace std;
 void BPlusTree::insertInternal(float key, Node *cursorDiskAddress, Node *childDiskAddress)
 {
   // Load in cursor (parent) and child from disk to get latest copy.
-  void *cursorMainMemory = operator new(nodeSize);
-  std::memcpy(cursorMainMemory, cursorDiskAddress, nodeSize);
-  Node *cursor = (Node *)cursorMainMemory;
+  Address cursorAddress{cursorDiskAddress, 0};
+  Node *cursor = (Node *)index->loadFromDisk(cursorAddress, nodeSize);
 
   if (cursorDiskAddress == rootAddress)
   {
     root = cursor;
   }
 
-  void *childMainMemory = operator new(nodeSize);
-  std::memcpy(childMainMemory, childDiskAddress, nodeSize);
-  Node *child = (Node *)childMainMemory;
-
-  std::cerr << "cursor insertInternal:" << endl;
-  for (int i = 0; i < cursor->numKeys; i++)
-  {
-    std::cerr << cursor->keys[i] << " | ";
-  }
-  std::cerr << endl;
-
-  std::cerr << "child right insertInternal:" << endl;
-  for (int i = 0; i < child->numKeys; i++)
-  {
-    std::cerr << child->keys[i] << " | ";
-  }
-  std::cerr << endl;
+  Address childAddress{childDiskAddress, 0};
+  Node *child = (Node *)index->loadFromDisk(childAddress, nodeSize);
 
   // If parent (cursor) still has space, we can simply add the child node as a pointer.
   // We don't have to load parent from the disk again since we still have a main memory pointer to it.
@@ -73,14 +57,12 @@ void BPlusTree::insertInternal(float key, Node *cursorDiskAddress, Node *childDi
     cursor->pointers[i + 1] = childAddress;
 
     // Write the updated parent (cursor) to the disk.
-    std::memcpy(cursorDiskAddress, cursor, nodeSize);
-
-    std::cerr << "insertInternal - Updating parent: " << cursor->keys[0] << endl;
+    Address cursorAddress{cursorDiskAddress, 0};
+    index->saveToDisk(cursor, nodeSize, cursorAddress);
   }
   // If parent node doesn't have space, we need to recursively split parent node and insert more parent nodes.
   else
   {
-    std::cerr << "insertInternal overflow: Splitting..." << endl;
     // Make new internal node (split this parent node into two).
     // Note: We DO NOT add a new key, just a new pointer!
     Node *newInternal = new Node(maxKeys);
@@ -143,7 +125,6 @@ void BPlusTree::insertInternal(float key, Node *cursorDiskAddress, Node *childDi
     // Insert new keys into the new internal parent node.
     for (i = 0, j = cursor->numKeys + 1; i < newInternal->numKeys; i++, j++)
     {
-      std::cerr << "Insert key into newInternal: " << tempKeyList[i] << endl;
       newInternal->keys[i] = tempKeyList[j];
     }
 
@@ -157,31 +138,11 @@ void BPlusTree::insertInternal(float key, Node *cursorDiskAddress, Node *childDi
     // Because we already reduced its numKeys as we are only adding to the right bound.
 
     // Save the old parent and new internal node to disk.
-    std::memcpy(cursorDiskAddress, cursor, nodeSize);
+    Address cursorAddress{cursorDiskAddress, 0};
+    index->saveToDisk(cursor, nodeSize, cursorAddress);
 
-    Address newInternalDiskAddress = index->allocate(nodeSize);
-    std::memcpy(newInternalDiskAddress.blockAddress, newInternal, nodeSize);
-
-    std::cerr << "newInternal:" << endl;
-    for (int i = 0; i < newInternal->numKeys; i++)
-    {
-      std::cerr << newInternal->keys[i] << " | ";
-    }
-    std::cerr << endl;
-
-    std::cerr << "cursorLeft:" << endl;
-    for (int i = 0; i < cursor->numKeys; i++)
-    {
-      std::cerr << cursor->keys[i] << " | ";
-    }
-    std::cerr << endl;
-
-    std::cerr << "current root:" << endl;
-    for (int i = 0; i < root->numKeys; i++)
-    {
-      std::cerr << root->keys[i] << " | ";
-    }
-    std::cerr << endl;
+    // Address newInternalAddress{newInternal, 0};
+    Address newInternalDiskAddress = index->saveToDisk(newInternal, nodeSize);
 
     // If current cursor is the root of the tree, we need to create a new root.
     if (cursor == root)
@@ -210,20 +171,16 @@ void BPlusTree::insertInternal(float key, Node *cursorDiskAddress, Node *childDi
       root = newRoot;
 
       // Save newRoot into disk.
-      Address newRootAddress = index->allocate(nodeSize);
-      std::memcpy(newRootAddress.blockAddress, root, nodeSize);
+      Address newRootAddress = index->saveToDisk(root, nodeSize);
 
       // Update rootAddress
       rootAddress = newRootAddress.blockAddress;
-
-      std::cerr << "insertInternal - Making new root: " << newInternal->keys[0] << endl;
     }
     // Otherwise, parent is internal, so we need to split and make a new parent internally again.
     // This is done recursively if needed.
     else
     {
       Node *parentDiskAddress = findParent((Node *)rootAddress, cursorDiskAddress, cursor->keys[0]);
-      std::cerr << parentDiskAddress << endl;
       insertInternal(cursor->keys[cursor->numKeys], parentDiskAddress, (Node *)newInternalDiskAddress.blockAddress);
     }
   }
@@ -339,8 +296,6 @@ void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDi
     return;
   }
 
-  std::cerr << "internalDelete - Underflow in internal node!" << endl;
-
   // If we reach here, means there's underflow in parent's keys.
   // Try to steal some from neighbouring nodes.
   // If we are the root, we are screwed. Just give up.
@@ -422,8 +377,6 @@ void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDi
       // Save current node to disk.
       Address cursorAddress = {cursorDiskAddress, 0};
       index->saveToDisk(cursor, nodeSize, cursorAddress);
-
-      std::cerr << "removeInternal: Transferred " << cursor->keys[0] << " from left sibling of internal node to prevent underflow." << endl;
       return;
     }
   }
@@ -472,8 +425,6 @@ void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDi
       // Save current node to disk.
       Address cursorAddress = {cursorDiskAddress, 0};
       index->saveToDisk(cursor, nodeSize, cursorAddress);
-
-      std::cerr << "Transferred " << cursor->keys[cursor->numKeys - 1] << " from right sibling of internal node to prevent underflow." << endl;
       return;
     }
   }
@@ -515,8 +466,6 @@ void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDi
     // Delete current node (cursor)
     // We need to update the parent in order to fully remove the current node.
     removeInternal(parent->keys[leftSibling], (Node *)parentDiskAddress, (Node *)cursorDiskAddress);
-
-    std::cerr << "internalRemove: Merged with left sibling." << endl;
   }
   // If left sibling doesn't exist, try to merge with right sibling.
   else if (rightSibling <= parent->numKeys)
@@ -555,8 +504,6 @@ void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDi
     // We need to update the parent in order to fully remove the right node.
     void *rightNodeAddress = parent->pointers[rightSibling].blockAddress;
     removeInternal(parent->keys[rightSibling - 1], (Node *)parentDiskAddress, (Node *)rightNodeAddress);
-
-    std::cerr << "internalRemove: Merged with left sibling." << endl;
   }
 }
 
@@ -564,12 +511,8 @@ void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDi
 Node *BPlusTree::findParent(Node *cursorDiskAddress, Node *childDiskAddress, float lowerBoundKey)
 {
   // Load in cursor into main memory, starting from root.
-  void *cursorMainMemory = operator new(nodeSize);
-  std::memcpy(cursorMainMemory, cursorDiskAddress, nodeSize);
-  Node *cursor = (Node *)cursorMainMemory;
-
-  std::cerr << "Target address:" << childDiskAddress << endl;
-  std::cerr << "Target key:" << lowerBoundKey << endl;
+  Address cursorAddress{cursorDiskAddress, 0};
+  Node *cursor = (Node *)index->loadFromDisk(cursorAddress, nodeSize);
 
   // If the root cursor passed in is a leaf node, there is no children, therefore no parent.
   if (cursor->isLeaf)
@@ -586,8 +529,6 @@ Node *BPlusTree::findParent(Node *cursorDiskAddress, Node *childDiskAddress, flo
     // Check through all pointers of the node to find match.
     for (int i = 0; i < cursor->numKeys + 1; i++)
     {
-      std::cerr << "Check: " << cursor->pointers[i].blockAddress << endl;
-      std::cerr << "Target: " << childDiskAddress << endl;
       if (cursor->pointers[i].blockAddress == childDiskAddress)
       {
         return parentDiskAddress;
@@ -600,13 +541,10 @@ Node *BPlusTree::findParent(Node *cursorDiskAddress, Node *childDiskAddress, flo
       if (lowerBoundKey < cursor->keys[i])
       {
         // Load node in from disk to main memory.
-        void *mainMemoryNode = operator new(nodeSize);
-        std::memcpy(mainMemoryNode, cursor->pointers[i].blockAddress, nodeSize);
+        Node *mainMemoryNode = (Node *)index->loadFromDisk(cursor->pointers[i], nodeSize);
 
         // Update parent address.
         parentDiskAddress = (Node *)cursor->pointers[i].blockAddress;
-
-        std::cerr << "Going to address: " << cursor->pointers[i].blockAddress;
 
         // Move to new node in main memory.
         cursor = (Node *)mainMemoryNode;
@@ -617,13 +555,10 @@ Node *BPlusTree::findParent(Node *cursorDiskAddress, Node *childDiskAddress, flo
       if (i == cursor->numKeys - 1)
       {
         // Load node in from disk to main memory.
-        void *mainMemoryNode = operator new(nodeSize);
-        std::memcpy(mainMemoryNode, cursor->pointers[i + 1].blockAddress, nodeSize);
+        Node *mainMemoryNode = (Node *)index->loadFromDisk(cursor->pointers[i + 1], nodeSize);
 
         // Update parent address.
         parentDiskAddress = (Node *)cursor->pointers[i + 1].blockAddress;
-
-        std::cerr << "Going to address: " << cursor->pointers[i + 1].blockAddress;
 
         // Move to new node in main memory.
         cursor = (Node *)mainMemoryNode;

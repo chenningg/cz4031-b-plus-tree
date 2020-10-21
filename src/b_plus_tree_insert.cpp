@@ -23,7 +23,6 @@ void BPlusTree::insert(Address address, float key)
     // Allocate LLNode and root address
     Address LLNodeAddress = index->saveToDisk((void *)LLNode, nodeSize);
 
-
     // Create new node in main memory, set it to root, and add the key and values to it.
     root = new Node(maxKeys);
     root->keys[0] = key;
@@ -34,7 +33,6 @@ void BPlusTree::insert(Address address, float key)
     // Write the root node into disk and track of root node's disk address.
     rootAddress = index->saveToDisk(root, nodeSize).blockAddress;
 
-    
     // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
     // Update number of nodes and levels
     // numNodes += 2;
@@ -142,7 +140,7 @@ void BPlusTree::insert(Address address, float key)
         // Update variables
         cursor->pointers[i] = LLNodeAddress;
         cursor->numKeys++;
-  
+
         // Update leaf node pointer link to next node
         cursor->pointers[cursor->numKeys] = next;
 
@@ -158,13 +156,6 @@ void BPlusTree::insert(Address address, float key)
     {
       // Create a new leaf node to put half the keys and pointers in.
       Node *newLeaf = new Node(maxKeys);
-
-      // Update nodes count
-
-      // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
-      // numNodes++;
-      // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
-
 
       // Copy all current keys and pointers (including new key to insert) to a temporary list.
       float tempKeyList[maxKeys + 1];
@@ -221,10 +212,6 @@ void BPlusTree::insert(Address address, float key)
         // Allocate LLNode into disk.
         Address LLNodeAddress = index->saveToDisk((void *)LLNode, nodeSize);
         tempPointerList[i] = LLNodeAddress;
-        
-        // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
-        // numNodes++;
-        // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
 
         newLeaf->isLeaf = true; // New node is a leaf node.
 
@@ -236,15 +223,6 @@ void BPlusTree::insert(Address address, float key)
         // Essentially newLeaf -> Y, where Y is some other leaf node pointer wherein cursor -> Y previously.
         // We use maxKeys since cursor was previously full, so last pointer's index is maxKeys.
         newLeaf->pointers[newLeaf->numKeys] = next;
-
-        // // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
-        // // Set the new last pointer of the existing cursor to point to the new leaf node (linked list).
-        // // Effectively, it was cursor -> Y, now it's cursor -> newLeaf -> Y, where Y is some other leaf node.
-        // // We need to save the new leaf node to the disk and store that disk address in the pointer.
-        // Address newLeafAddress = index->allocate(nodeSize);
-        // cursor->pointers[cursor->numKeys] = newLeafAddress;
-        // // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
-
 
         // Now we need to deal with the rest of the keys and pointers.
         // Note that since we are at a leaf node, pointers point directly to records on disk.
@@ -291,16 +269,8 @@ void BPlusTree::insert(Address address, float key)
           newRoot->isLeaf = false;
           newRoot->numKeys = 1;
 
-          // Add new node and level to the tree.
-          // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
-          // numNodes++;
-          // levels++;
-          // ------------------ KIVVVVVVVVVVVVVVVVVVVVVVVVVVVV ---------------
-
-
           // Write the new root node to disk and update the root disk address stored in B+ Tree.
           Address newRootAddress = index->saveToDisk(newRoot, nodeSize);
-
 
           // Update the root address
           rootAddress = newRootAddress.blockAddress;
@@ -332,7 +302,6 @@ Address BPlusTree::insertLL(Address LLHead, Address address, float key)
       head->keys[i] = head->keys[i - 1];
     }
 
-
     // Move all pointers back to insert at the head.
     for (int i = head->numKeys + 1; i > 0; i--)
 
@@ -344,14 +313,6 @@ Address BPlusTree::insertLL(Address LLHead, Address address, float key)
     head->keys[0] = key;
     head->pointers[0] = address; // the disk address of the key just inserted
     head->numKeys++;
-
-    // Print keys of a node
-    std::cerr << "Linked list:" << endl;
-    for (int i = 0; i < head->numKeys; i++)
-    {
-      std::cerr << head->keys[i] << " | ";
-    }
-    std::cerr << endl;
 
     // Write head back to disk.
     LLHead = index->saveToDisk((void *)head, nodeSize, LLHead);
@@ -379,8 +340,6 @@ Address BPlusTree::insertLL(Address LLHead, Address address, float key)
 
     // Write new linked list node to disk.
     Address LLNodeAddress = index->saveToDisk((void *)LLNode, nodeSize);
-
-    cout << "\nAddress of new head for LL for integer " << key << ": " << LLNode;
 
     // Return disk address of new linked list head
     return LLNodeAddress;

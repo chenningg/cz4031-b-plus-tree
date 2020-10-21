@@ -18,9 +18,9 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
   else
   {
     // Load in root from disk.
-    void *rootMainMemory = operator new(nodeSize);
-    std::memcpy(rootMainMemory, rootAddress, nodeSize);
-    root = (Node *)rootMainMemory;
+    Address rootDiskAddress{rootAddress, 0};
+    root = (Node *)index->loadFromDisk(rootDiskAddress, nodeSize);
+
     Node *cursor = root;
 
     bool found = false;
@@ -73,7 +73,7 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
           // Add new line for each leaf node's linked list printout.
           std::cerr << endl;
           std::cerr << "tconst for average rating: " << cursor->keys[i] << " > ";
-          ;
+
           // Access the linked list node and print records.
           displayLL(cursor->pointers[i]);
         }
@@ -91,62 +91,7 @@ void BPlusTree::search(float lowerBoundKey, float upperBoundKey)
       }
     }
 
-    std::cerr << "No more records found!" << endl;
+    std::cerr << "\nNo more records found for range " << lowerBoundKey << " to " << upperBoundKey << endl;
     return;
   }
-
-  //   // Check if this block hasn't been loaded from disk yet.
-  //   void *blockAddress = (void *)(cursor->pointers[i]).blockAddress;
-  //   short int offset = cursor->pointers[i].offset;
-
-  //   if (loadedBlocks.find(blockAddress) == loadedBlocks.end())
-  //   {
-  //     // Load block into main memory.
-  //     void *mainMemoryBlock = operator new(nodeSize);
-  //     std::memcpy(mainMemoryBlock, blockAddress, nodeSize);
-
-  //     // Keep track of loaded blocks so we don't have to reload them from disk.
-  //     loadedBlocks[blockAddress] = mainMemoryBlock;
-
-  //     dataBlocksAccessed += 1;
-  //   }
-
-  //   // Here, we can access the loaded block (in main memory) to get the record that fits our search range.
-  //   // Add the corresponding record to the results list using its main memory block address + offset.
-  //   Record result = *(Record *)((char *)(loadedBlocks[blockAddress]) + offset);
-  //   results.push_back(result);
-
-  //   // If we reached the end of all keys in this node, go to the next linked leaf node to keep searching.
-  //   if (i == cursor->numKeys - 1)
-  //   {
-  //     // Load next node from disk to main memory.
-  //     void *mainMemoryNode = operator new(nodeSize);
-
-  //     // Load pointer + 1 (next pointer in node).
-  //     void *blockAddress = cursor->pointers[i + 1].blockAddress;
-  //     std::memcpy(mainMemoryNode, blockAddress, nodeSize);
-
-  //     // Set cursor to the child node, now loaded in main memory.
-  //     cursor = (Node *)mainMemoryNode;
-  //     indexNodesAccessed += 1;
-  //     break;
-  //   }
-  // }
-  // }
-
-  // // Report on blocks searched.
-  // std::cerr << "Number of index nodes accessed: " << indexNodesAccessed << '\n';
-  // std::cerr << "Number of data blocks accessed: " << dataBlocksAccessed << '\n';
-
-  // // If nothing found, throw an error.
-  // if (results.size() < 1)
-  // {
-  //   throw std::logic_error("Could not find any matching records within the given range.");
-  // }
-  // // Else return the list of records found corresponding to the search range.
-  // else
-  // {
-  //   return results;
-  // }
-  // }
 }

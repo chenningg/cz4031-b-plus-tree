@@ -20,8 +20,6 @@ Node::Node(int maxKeys)
 
   for (int i = 0; i < maxKeys + 1; i++)
   {
-    // Address nullAddress{NULL, 0};
-    // pointers[i] = nullAddress;
     Address nullAddress{(void *)myNullPtr, 0};
     pointers[i] = nullAddress;
   }
@@ -76,64 +74,25 @@ void b_plus_tree_test()
   BPlusTree tree = BPlusTree(100, test);
   std::cerr << "Max keys: " << tree.getMaxKeys() << endl;
 
-
-  for (int j = 0; j < 10; j++)
+  for (int i = 0; i < 30; i++)
   {
-    for (int i = 1; i < 7; i++)
+    for (int j = 0; j < 7; j++)
     {
-      Record record1 = {"tt000001", 1.0, 80};
-      Address addr = test->saveToDisk(&record1, sizeof(Record));
-      tree.insert(addr, float(i));
+      Record record{"tt0000001", 5.0, 2111};
+      Address address = test->saveToDisk(&record, sizeof(Record));
+      tree.insert(address, float(j));
     }
   }
 
-  for (int i = 1; i < 7; i++)
-  {
-    Record record1 = {"tt000002", 3.0, 80};
-    Address addr = test->saveToDisk(&record1, sizeof(Record));
-    tree.insert(addr, float(i));
-  }
-
-  for (int i = 1; i < 7; i++)
-  {
-    Record record1 = {"tt000003", 3.0, 80};
-    Address addr = test->saveToDisk(&record1, sizeof(Record));
-    tree.insert(addr, float(i));
-  }
-  for (int i = 1; i < 7; i++)
-  {
-    Record record1 = {"tt00004", 1.0, 80};
-    Address addr = test->saveToDisk(&record1, sizeof(Record));
-    tree.insert(addr, float(i));
-  }
-
-  for (int i = 1; i < 7; i++)
-  {
-    Record record1 = {"tt000005", 2.0, 80};
-    Address addr = test->saveToDisk(&record1, sizeof(Record));
-    tree.insert(addr, float(i));
-  }
-
-
-  for (int i = 1; i < 7; i++)
-  {
-    Record record1 = {"tt000006", 3.0, 80};
-    Address addr = test->saveToDisk(&record1, sizeof(Record));
-    tree.insert(addr, float(i));
-  }
-
-  for (int i = 1; i < 7; i++)
-  {
-    Record record1 = {"tt000007", 3.0, 80};
-    Address addr = test->saveToDisk(&record1, sizeof(Record));
-    tree.insert(addr, float(i));
-  }
-
-
-  tree.display(tree.getRoot(), 1);
-
-  tree.search(float(2), float(6));
-
   tree.remove(float(2));
+  tree.remove(float(100));
+
+  tree.search(float(100), float(100));
+
+  tree.search(float(0), float(10));
   tree.display(tree.getRoot(), 1);
+
+  // tree.remove(float(2));
+  // tree.display(tree.getRoot(), 1);
+  // tree.search(float(2), float(4));
 }
