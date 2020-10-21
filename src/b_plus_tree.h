@@ -5,7 +5,7 @@
 #include "memory_pool.h"
 
 #include <cstddef>
-#include <vector>
+#include <array>
 
 // A node in the B+ Tree.
 class Node

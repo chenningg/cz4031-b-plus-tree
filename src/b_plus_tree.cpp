@@ -4,24 +4,28 @@
 
 #include <tuple>
 #include <iostream>
-#include <vector>
+#include <array>
 #include <unordered_map>
 #include <cstring>
 
 using namespace std;
 
+bool myNullPtr = false;
+
 Node::Node(int maxKeys)
 {
   // Initialize empty array of keys and pointers.
-  this->keys = new float[maxKeys];
-  this->pointers = new Address[maxKeys + 1];
+  keys = new float[maxKeys];
+  pointers = new Address[maxKeys + 1];
 
-  Address addr{nullptr, 0};
   for (int i = 0; i < maxKeys + 1; i++)
   {
-    this->pointers[i] = addr;
+    // Address nullAddress{NULL, 0};
+    // pointers[i] = nullAddress;
+    Address nullAddress{(void *)myNullPtr, 0};
+    pointers[i] = nullAddress;
   }
-  this->numKeys = 0;
+  numKeys = 0;
 }
 
 BPlusTree::BPlusTree(std::size_t blockSize, MemoryPool *disk)
@@ -72,11 +76,14 @@ void b_plus_tree_test()
   BPlusTree tree = BPlusTree(100, test);
   std::cerr << "Max keys: " << tree.getMaxKeys() << endl;
 
-  for (int i = 1; i < 7; i++)
+  for (int j = 0; j < 10; j++)
   {
-    Record record1 = {"tt000001", 1.0, 80};
-    Address addr = test->saveToDisk(&record1, sizeof(Record));
-    tree.insert(addr, float(i));
+    for (int i = 1; i < 7; i++)
+    {
+      Record record1 = {"tt000001", 1.0, 80};
+      Address addr = test->saveToDisk(&record1, sizeof(Record));
+      tree.insert(addr, float(i));
+    }
   }
 
   for (int i = 1; i < 7; i++)
@@ -100,6 +107,8 @@ void b_plus_tree_test()
     tree.insert(addr, float(i));
   }
 
-  tree.display(tree.getRoot(), 1);
   tree.search(float(2), float(6));
+
+  tree.remove(float(2));
+  tree.display(tree.getRoot(), 1);
 }
