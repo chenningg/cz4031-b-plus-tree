@@ -14,6 +14,24 @@ using namespace std;
 
 int main()
 {
+  int BLOCKSIZE=0;
+  std::cerr <<"=========================================================================================="<<endl;
+  std::cerr <<"Select Block size:           "<<endl;
+  int choice=0;
+  while(choice!= 1 && choice != 2){
+    std::cerr <<"Enter a choice: "<<endl;
+    std::cerr <<"1. 100 B "<<endl;
+    std::cerr <<"2. 500 B"<<endl;
+    cin >> choice;
+    if(int(choice) == 1){
+      BLOCKSIZE = int(100);
+    }else if (int(choice) == 2){
+      BLOCKSIZE = int(500);
+    }else{
+    cin.clear();
+    std::cerr <<"Invalid input, input either 1 or 2"<<endl;
+    }
+  }
   // =============================================================
   // Experiment 1:
   // Store the data (which is about IMDb movives and described in Part 4) on the disk and report the following statistics:
@@ -23,11 +41,10 @@ int main()
   
   // Create memory pools for the disk and the index, total 500MB
   std::cerr << "creating the disk on the stack for records, index" << endl;
-  int BLOCKSIZE = 100; // in bytes
-  MemoryPool disk(100000, BLOCKSIZE);  
-  MemoryPool index(100000, BLOCKSIZE);  
-  // MemoryPool disk(150000000, BLOCKSIZE);  
-  // MemoryPool index(350000000, BLOCKSIZE);
+  // MemoryPool disk(100000, BLOCKSIZE);  
+  // MemoryPool index(100000, BLOCKSIZE);  
+  MemoryPool disk(150000000, BLOCKSIZE);  
+  MemoryPool index(350000000, BLOCKSIZE);
 
   // Creating the tree 
   BPlusTree tree = BPlusTree(BLOCKSIZE, &disk, &index);
@@ -41,6 +58,7 @@ int main()
 
 
   // Open test data
+  std::cerr <<"Reading in test data ... "<<endl;
   std::ifstream file("../data/testdata.tsv");
   // std::ifstream file("../data/data.tsv");
 
@@ -70,50 +88,143 @@ int main()
       tree.insert(tempAddress, float(temp.averageRating));
 
       //logging
-      cout << "Inserted record " << recordNum + 1 << " at block address: " << &tempAddress.blockAddress << " and offset " << &tempAddress.offset << endl;
+      // cout << "Inserted record " << recordNum + 1 << " at block address: " << &tempAddress.blockAddress << " and offset " << &tempAddress.offset << endl;
       recordNum += 1;
     }
     file.close();
-
-    // tree.display(tree.getRoot(), 1);
-    // cout<<"recordNum: "<<recordNum<<'\n';
-    // cout<<"max Keys: "<<tree.getMaxKeys()<<'\n';
-    // cout<<"tree levels: "<<tree.getLevels()<<'\n';
-    // cout<<"number of nodes: "<<tree.getNumNodes()<<'\n';
   }
-  // cout << "Number of blocks used: " << disk.getAllocated() << " blocks" << '\n';
-  // cout << "Actual size used: " << disk.getActualSizeUsed() << " bytes" << '\n';
-  // cout << "Total size occupied: " << disk.getSizeUsed() << " bytes" << '\n';
+  
+  std::cerr <<"=================================Main Menu=============================================="<<endl;
+    
+    choice=0;
+    while(choice!= 1 && choice != 2 && choice!= 3 && choice!= 4 && choice !=5 && choice != 6){
+      std::cerr <<"Enter a choice: "<<endl;
+      std::cerr <<"1. View Experiment 1 results (Database Information)                     :"<<endl;
+      std::cerr <<"2. View Experiment 2 results (B+ Tree Information)                      :"<<endl;
+      std::cerr <<"3. View Experiment 3 results (Retrieve movies with averageRating 8)     :"<<endl;
+      std::cerr <<"4. View Experiment 4 results (Retrieve movies with averageRating 7 to 9):"<<endl;
+      std::cerr <<"5. View Experiment 5 results (Delete movies with averageRating 7)       :"<<endl;
+      std::cerr <<"6. Exit "<<endl;
+      cin >> choice;
+      if(int(choice)==1){
+        // call experiment 1
+        std::cerr <<"=====================================Experiment 1=========================================="<<endl;
+        std::cerr << "Number of records per record block --- " << BLOCKSIZE / sizeof(Record) << endl;
+        std::cerr << "Number of keys per index block --- " << tree.getMaxKeys() << endl;
+        std::cerr << "Number of record blocks --- " << disk.getAllocated() << endl;
+        std::cerr << "Number of index blocks --- " << index.getAllocated() << endl;
+        std::cerr << "Size of actual record data stored --- " << disk.getActualSizeUsed() << endl;
+        std::cerr << "Size of actual index data stored --- " << index.getActualSizeUsed() << endl;
+        std::cerr << "Size of record blocks --- " << disk.getSizeUsed() << endl;
+        std::cerr << "Size of index blocks --- " << index.getSizeUsed() << endl;
+        std::cerr <<"Total number of blocks   : "<<disk.getAllocated() + index.getAllocated()<<endl;
+        std::cerr <<"Actual size of database : "<<disk.getActualSizeUsed() + index.getActualSizeUsed()<<endl;
+        std::cerr <<"Size of database (size of all blocks): "<<disk.getSizeUsed()+index.getSizeUsed()<<endl;
+        std::cerr <<"Press any integer to go back to menu"<<endl;
+        cin >> choice;
+        choice =0;
+        continue;
+      }else if(int(choice) == 2){
+        // call experiment 2
+        std::cerr <<"=====================================Experiment 2=========================================="<<endl;
+        std::cerr <<"Parameter n of the B+ tree    : "<<tree.getMaxKeys()<<endl;
+        std::cerr <<"Number of nodes of the B+ tree: "<<tree.getNumNodes()<<endl;
+        std::cerr <<"Height of the B+ tree         : "<<tree.getLevels()<<endl;
+        std::cerr << "Root nodes and child nodes :"<<endl;
+        tree.display(tree.getRoot(),1);
+        std::cerr <<endl;
+        std::cerr <<"Enter any integer to go back to menu"<<endl;
+        cin >> choice;
+        choice =0;
+        continue;
+      }else if (int(choice) == 3){
+        // call experiment 3
+        std::cerr <<"=====================================Experiment 3=========================================="<<endl;
+        std::cerr <<"Retrieving the attribute “tconst” of those movies with averageRating equal to 8..."<<endl;
+        std::cerr <<"Number and content of index blocks the process accesses: "<<index.resetBlocksAccessed()<<endl; 
+        std::cerr <<"Number and content of record blocks the process accesses: "<<disk.resetBlocksAccessed()<<endl;
+        std::cerr <<"Attribute “tconst” of the records that are returned   : "<<endl;
+        tree.search(8.0,8.0);
+        std::cerr << "\nNo more records found for range " << 8.0 << " to " << 8.0 << endl;
+        std::cerr <<"Enter any integer to go back to menu"<<endl;
+        cin >> choice;
+        choice =0;
+        continue;
+      }else if (int(choice) == 4){
+        // call experiment 4
+        std::cerr <<"=====================================Experiment 4=========================================="<<endl;
+        std::cerr <<"Retrieving the attribute “tconst” of those movies with averageRating from 7 to 9 (inclusively)..."<<endl;
+        std::cerr <<"Number and content of index blocks the process accesses: "<<index.resetBlocksAccessed()<<endl; 
+        std::cerr <<"Number and content of data blocks the process accesses: "<<disk.resetBlocksAccessed()<<endl;
+        std::cerr <<"Attribute “tconst” of the records that are returned   : "<<endl;
+        tree.search(7,9);
+        std::cerr <<endl;
+        std::cerr <<"Enter any integer to go back to menu"<<endl;
+        cin >> choice;
+        choice =0;
+        continue;
+      }else if (int(choice) == 5){
+        // call experiment 5
+        std::cerr <<"=====================================Experiment 5=========================================="<<endl;
+        std::cerr << "Original B+ Tree before deletion" << endl;
+        std::cerr << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
+        std::cerr << "Height of tree --- " << tree.getLevels() << endl;
+        std::cerr << endl;
+        tree.display(tree.getRoot(), 1);
+        std::cerr << endl;
+        std::cerr<<"Deleting those movies with the attribute “averageRating” equal to 7...\n";
+
+        tree.remove(7.0);
+
+        std::cerr << "B+ Tree after deletion" << endl;
+        std::cerr <<"Number of times that a node is deleted (or two nodes are merged): "<<tree.getNumNodesDeleted()<<endl; 
+        std::cerr << "Number of nodes in updated B+ Tree --- " << tree.getNumNodes() << endl;
+        std::cerr << "Height of updated B+ tree --- " << tree.getLevels() << endl;
+        std::cerr << endl;
+        tree.display(tree.getRoot(), 1);
+        std::cerr << endl;
+        
+        std::cerr <<"Enter any integer to go back to menu"<<endl;
+        cin >> choice;
+        choice =0;
+        continue;
+      }else if (int(choice) == 6){
+        std::cerr <<"Exiting...";
+        break;
+      }else{
+        cin.clear();
+        std::cerr <<"Invalid input, input 1 to 6\n";
+      }
+    }
+
+  // std::cerr << "\n\n================ TREEPRINT ================\n";
+  // tree.display(tree.getRoot(), 1);
+  // std::cerr << "\n================ END OF REPORT ================\n\n";
 
 
-  std::cerr << "\n\n================ TREEPRINT ================\n";
-  tree.display(tree.getRoot(), 1);
-  std::cerr << "\n================ END OF REPORT ================\n\n";
 
+  // std::cerr << "\n\n================ SIZE REPORT ================\n";
+  // std::cerr << "Number of record blocks --- " << disk.getAllocated() << endl;
+  // std::cerr << "Size of record blocks --- " << disk.getSizeUsed() << endl;
+  // std::cerr << "Size of actual record data stored --- " << disk.getActualSizeUsed() << endl;
+  // std::cerr << "Number of records per record block --- " << BLOCKSIZE / sizeof(Record) << endl;
 
+  // std::cerr << endl;
 
-  std::cerr << "\n\n================ SIZE REPORT ================\n";
-  std::cerr << "Number of record blocks --- " << disk.getAllocated() << endl;
-  std::cerr << "Size of record blocks --- " << disk.getSizeUsed() << endl;
-  std::cerr << "Size of actual record data stored --- " << disk.getActualSizeUsed() << endl;
-  std::cerr << "Number of records per record block --- " << BLOCKSIZE / sizeof(Record) << endl;
-
-  std::cerr << endl;
-
-  std::cerr << "Number of index blocks --- " << index.getAllocated() << endl;
-  std::cerr << "Size of index blocks --- " << index.getSizeUsed() << endl;
-  std::cerr << "Size of actual index data stored --- " << index.getActualSizeUsed() << endl;
-  std::cerr << "Number of keys per index block --- " << tree.getMaxKeys() << endl;
-  std::cerr << "\n================ END OF REPORT ================\n\n";
+  // std::cerr << "Number of index blocks --- " << index.getAllocated() << endl;
+  // std::cerr << "Size of index blocks --- " << index.getSizeUsed() << endl;
+  // std::cerr << "Size of actual index data stored --- " << index.getActualSizeUsed() << endl;
+  // std::cerr << "Number of keys per index block --- " << tree.getMaxKeys() << endl;
+  // std::cerr << "\n================ END OF REPORT ================\n\n";
 
 
 
 
-  std::cerr << "\n\n================ INSERT REPORT ================\n";
-  std::cerr << "Insertion complete " << endl;
-  std::cerr << "Record blocks accessed --- " << disk.resetBlocksAccessed() << endl;
-  std::cerr << "Index blocks accessed --- " << index.resetBlocksAccessed() << endl;
-  std::cerr << "\n================ END OF REPORT ================\n\n";
+  // std::cerr << "\n\n================ INSERT REPORT ================\n";
+  // std::cerr << "Insertion complete " << endl;
+  // std::cerr << "Record blocks accessed --- " << disk.resetBlocksAccessed() << endl;
+  // std::cerr << "Index blocks accessed --- " << index.resetBlocksAccessed() << endl;
+  // std::cerr << "\n================ END OF REPORT ================\n\n";
 
 
 
@@ -121,43 +232,35 @@ int main()
 
 
 
-  std::cerr << "\n\n================ SEARCH REPORT ================\n";
-  tree.search(0, 10);  
-  std::cerr << "\nNo more records found for range " << 0 << " to " << 10 << endl;
-  std::cerr << "Record blocks accessed --- " << disk.resetBlocksAccessed() << endl;
-  std::cerr << "Index blocks accessed --- " << index.resetBlocksAccessed() << endl;
-  std::cerr << "\n================ END OF REPORT ================\n\n";
+  // std::cerr << "\n\n================ SEARCH REPORT ================\n";
+  // tree.search(0, 10);  
+  // std::cerr << "\nNo more records found for range " << 0 << " to " << 10 << endl;
+  // std::cerr << "Record blocks accessed --- " << disk.resetBlocksAccessed() << endl;
+  // std::cerr << "Index blocks accessed --- " << index.resetBlocksAccessed() << endl;
+  // std::cerr << "\n================ END OF REPORT ================\n\n";
 
 
 
-  std::cerr << "\n\n================ DELETE REPORT ================\n";
-  std::cerr << "Original B+ Tree before deletion" << endl;
-  std::cerr << "Height of tree --- " << tree.getLevels() << endl;
-  std::cerr << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
-  std::cerr << endl;
-  tree.display(tree.getRoot(), 1);
-  std::cerr << endl;
+  // std::cerr << "\n\n================ DELETE REPORT ================\n";
+  // std::cerr << "Original B+ Tree before deletion" << endl;
+  // std::cerr << "Height of tree --- " << tree.getLevels() << endl;
+  // std::cerr << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
+  // std::cerr << endl;
+  // tree.display(tree.getRoot(), 1);
+  // std::cerr << endl;
 
-  tree.remove(7.0);  
-  tree.remove(5.4);  
-  tree.remove(5.5);  
+  // tree.remove(7.0);  
 
-  std::cerr << "B+ Tree after deletion" << endl;
-  std::cerr << "Height of tree --- " << tree.getLevels() << endl;
-  std::cerr << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
-  std::cerr << "Number of nodes deleted or merged in B+ Tree --- " << tree.getNumNodesDeleted() << endl;
-  std::cerr << endl;
-  tree.display(tree.getRoot(), 1);
-  std::cerr << endl;
-  std::cerr << "\n================ END OF REPORT ================\n\n";
+  // std::cerr << "B+ Tree after deletion" << endl;
+  // std::cerr << "Height of tree --- " << tree.getLevels() << endl;
+  // std::cerr << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
+  // std::cerr << endl;
+  // tree.display(tree.getRoot(), 1);
+  // std::cerr << endl;
+  // std::cerr << "\n================ END OF REPORT ================\n\n";
 
 
-  // call experiment 2
-  // call experiment 3
-  // call experiment 4
-  // call experiment 5
-
-  // call experiment 1-5 with 500B block size
+  
   
 
   return 0;
