@@ -36,25 +36,38 @@ void BPlusTree::displayNode(Node *node)
 }
 
 // Display a block and its contents in the disk. Assume it's already loaded in main memory.
-void BPlusTree::displayBlock(void *block)
+void BPlusTree::displayBlock(void *blockAddress)
 {
-  std::cout << "--------------- Start block -----------------" << '\n';
-  if (*(unsigned char *)&block == '\0')
+  // Load block into memory
+  void *block = operator new(nodeSize);
+  std::memcpy(block, blockAddress, nodeSize);
+
+  unsigned char testBlock[nodeSize];
+  memset(testBlock, '\0', nodeSize);
+
+  // Block is empty.
+  if (memcmp(testBlock, block, nodeSize) == 0)
   {
     std::cout << "Empty block!" << '\n';
+    return;
   }
-  else
-  {
-    void *endOfBlock = &block + nodeSize;
-    while (*(unsigned char *)&block != '\0' && block < endOfBlock)
-    {
-      Record *record = (Record *)block;
 
-      std::cout << "|" << record->tconst << "|" << record->averageRating << "|" << record->numVotes << "|" << '\n';
-      block = &block + sizeof(Record);
-    }
+  unsigned char *blockChar = (unsigned char *)block;
+
+  int i = 0;
+  while (i < nodeSize)
+  {
+    // Load each record
+    void *recordAddress = operator new(sizeof(Record));
+    std::memcpy(recordAddress, blockChar, sizeof(Record));
+
+    Record *record = (Record *)recordAddress;
+
+    std::cout << "[" << record->tconst << "|" << record->averageRating << "|" << record->numVotes << "]     ";
+    blockChar += sizeof(Record);
+    i += sizeof(Record);
   }
-  std::cout << "---------------- End block ------------------" << '\n';
+  
 }
 
 // Print the tree
@@ -97,8 +110,17 @@ void BPlusTree::displayLL(Address LLHeadAddress)
   for (int i = 0; i < head->numKeys; i++)
   {
     // Load the block from disk.
+    // void *blockMainMemoryAddress = operator new(nodeSize);
+    // std::memcpy(blockMainMemoryAddress, head->pointers[i].blockAddress, nodeSize);
+
+    std::cout << "\nData block accessed. Content is -----";
+    displayBlock(head->pointers[i].blockAddress);
+    std::cout << endl;
+
     Record result = *(Record *)(disk->loadFromDisk(head->pointers[i], sizeof(Record)));
     std::cout << result.tconst << " | ";
+
+
   }
 
   // Print empty slots

@@ -1,3 +1,8 @@
+creating the disk on the stack for records, index
+Max keys for a B+ tree node: 7
+Number of record blocks accessed in search operation reset to: 0
+Number of index blocks accessed in search operation reset to: 0
+Reading in test data ... 
 =====================================Experiment 1==========================================
 Number of records per record block --- 5
 Number of keys per index block --- 7
