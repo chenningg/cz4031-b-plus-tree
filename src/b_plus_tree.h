@@ -55,7 +55,7 @@ public:
   // Methods
 
   // Constructor, takes in block size to determine max keys/pointers in a node.
-  BPlusTree(std::size_t blockSize, MemoryPool *disk);
+  BPlusTree(std::size_t blockSize, MemoryPool *disk, MemoryPool *index);
 
   // Search for keys corresponding to a range in the B+ Tree given a lower and upper bound. Returns a list of matching Records.
   void search(float lowerBoundKey, float upperBoundKey);
@@ -110,7 +110,5 @@ public:
     return maxKeys;
   }
 };
-
-void b_plus_tree_test();
 
 #endif
