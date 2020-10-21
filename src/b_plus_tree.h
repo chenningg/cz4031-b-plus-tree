@@ -36,6 +36,7 @@ private:
   void *rootAddress;    // Pointer to root's address on disk.
   int maxKeys;          // Maximum keys in a node.
   int levels;           // Number of levels in this B+ Tree.
+  int numNodesDeleted;  // Number of nodes that have been deleted 
   int numNodes;         // Number of nodes in this B+ Tree.
   std::size_t nodeSize; // Size of a node = Size of block.
 
@@ -95,14 +96,15 @@ public:
   };
 
   // Returns the number of levels in this B+ Tree.
-  int getLevels()
-  {
-    return levels;
+  int getLevels();
+
+  int getNumNodes() {
+    return numNodes;
   }
 
-  int getNumNodes()
+  int getNumNodesDeleted()
   {
-    return numNodes;
+    return numNodesDeleted;
   }
 
   int getMaxKeys()

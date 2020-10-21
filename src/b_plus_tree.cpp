@@ -62,6 +62,7 @@ BPlusTree::BPlusTree(std::size_t blockSize, MemoryPool *disk, MemoryPool *index)
   // Initialize initial variables
   levels = 0;
   numNodes = 0;
+  numNodesDeleted = 0;
 
   // Initialize disk space for index and set reference to disk.
   

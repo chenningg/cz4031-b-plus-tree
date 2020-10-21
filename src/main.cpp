@@ -139,10 +139,13 @@ int main()
   std::cerr << endl;
 
   tree.remove(7.0);  
+  tree.remove(5.4);  
+  tree.remove(5.5);  
 
   std::cerr << "B+ Tree after deletion" << endl;
   std::cerr << "Height of tree --- " << tree.getLevels() << endl;
   std::cerr << "Number of nodes in B+ Tree --- " << tree.getNumNodes() << endl;
+  std::cerr << "Number of nodes deleted or merged in B+ Tree --- " << tree.getNumNodesDeleted() << endl;
   std::cerr << endl;
   tree.display(tree.getRoot(), 1);
   std::cerr << endl;
