@@ -215,10 +215,10 @@ int main()
         std::cout <<"=====================================Experiment 5=========================================="<<endl;
         std::cout<<"Deleting those movies with the attribute averageRating equal to 7...\n";
         
-        tree.remove(7.0);
+        int nodesDeleted = tree.remove(7.0);
 
         std::cout << "B+ Tree after deletion" << endl;
-        std::cout <<"Number of times that a node is deleted (or two nodes are merged): "<<tree.getNumNodesDeleted()<<endl; 
+        std::cout <<"Number of times that a node is deleted (or two nodes are merged): "<< nodesDeleted << endl; 
         std::cout << "Number of nodes in updated B+ Tree --- " << tree.getNumNodes() << endl;
         std::cout << "Height of updated B+ tree --- " << tree.getLevels() << endl;
         std::cout << endl;

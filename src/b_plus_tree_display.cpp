@@ -19,7 +19,12 @@ void BPlusTree::displayNode(Node *node)
   }
 
   // Print last filled pointer
-  std::cout << node->pointers[node->numKeys].blockAddress << "|";
+  if (node->pointers[node->numKeys].blockAddress == nullptr) {
+    std::cout << " Null |";
+  }
+  else {
+    std::cout << node->pointers[node->numKeys].blockAddress << "|";
+  }
 
   for (int i = node->numKeys; i < maxKeys; i++)
   {
@@ -105,7 +110,7 @@ void BPlusTree::displayLL(Address LLHeadAddress)
   // End of linked list
   if (head->pointers[head->numKeys].blockAddress == nullptr)
   {
-    std::cout << "End of linked list";
+    std::cout << "End of linked list" << endl;
     return;
   }
 
