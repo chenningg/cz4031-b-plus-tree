@@ -1,0 +1,12 @@
+=====================================Experiment 1==========================================
+Number of records per record block --- 5
+Number of keys per index block --- 7
+Number of record blocks --- 100
+Number of index blocks --- 112
+Size of actual record data stored --- 10000
+Size of actual index data stored --- 11200
+Size of record blocks --- 10000
+Size of index blocks --- 11200
+Total number of blocks   : 212
+Actual size of database : 21200
+Size of database (size of all blocks): 21200

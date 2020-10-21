@@ -36,7 +36,6 @@ private:
   void *rootAddress;    // Pointer to root's address on disk.
   int maxKeys;          // Maximum keys in a node.
   int levels;           // Number of levels in this B+ Tree.
-  int numNodesDeleted;  // Number of nodes that have been deleted 
   int numNodes;         // Number of nodes in this B+ Tree.
   std::size_t nodeSize; // Size of a node = Size of block.
 
@@ -81,7 +80,7 @@ public:
 
   // Remove a range of records from the disk (and B+ Tree).
   // Accepts a key to delete.
-  void remove(float key);
+  int remove(float key);
 
   // Remove an entire linked list from the start to the end for a given linked list head
   // No need to know they key since they are all the same
@@ -100,11 +99,6 @@ public:
 
   int getNumNodes() {
     return numNodes;
-  }
-
-  int getNumNodesDeleted()
-  {
-    return numNodesDeleted;
   }
 
   int getMaxKeys()

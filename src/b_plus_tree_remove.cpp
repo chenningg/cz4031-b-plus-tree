@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void BPlusTree::remove(float key)
+int BPlusTree::remove(float key)
 {
   // set numNodes before deletion
   numNodes = index->getAllocated();
@@ -93,7 +93,10 @@ void BPlusTree::remove(float key)
     if (!found)
     {
       std::cout << "Can't find specified key " << key << " to delete!" << endl;
-      return;
+      
+      // update numNodes and numNodesDeleted after deletion
+      int numNodesDeleted = numNodes - index->getAllocated();
+      return numNodesDeleted;
     }
 
     // pos is the position where we found the key.
@@ -109,6 +112,7 @@ void BPlusTree::remove(float key)
     }
 
     cursor->numKeys--;
+    
 
     // Move the last pointer forward (if any).
     cursor->pointers[cursor->numKeys] = cursor->pointers[cursor->numKeys + 1];
@@ -138,7 +142,10 @@ void BPlusTree::remove(float key)
         
       }
       std::cout << "Successfully deleted " << key << endl;
-      return;
+      
+      // update numNodes and numNodesDeleted after deletion
+      int numNodesDeleted = numNodes - index->getAllocated();
+      return numNodesDeleted;
     }
 
     // If we didn't delete from root, we check if we have minimum keys ⌊(n+1)/2⌋ for leaf.
@@ -146,7 +153,10 @@ void BPlusTree::remove(float key)
     {
       // No underflow, so we're done.
       std::cout << "Successfully deleted " << key << endl;
-      return;
+
+      // update numNodes and numNodesDeleted after deletion
+      int numNodesDeleted = numNodes - index->getAllocated();
+      return numNodesDeleted;
     }
 
     // If we reach here, means we have underflow (not enough keys for balanced tree).
@@ -194,7 +204,10 @@ void BPlusTree::remove(float key)
         // Save current node to disk.
         Address cursorAddress = {cursorDiskAddress, 0};
         index->saveToDisk(cursor, nodeSize, cursorAddress);
-        return;
+    
+        // update numNodes and numNodesDeleted after deletion
+        int numNodesDeleted = numNodes - index->getAllocated();
+        return numNodesDeleted;
       }
     }
 
@@ -243,7 +256,10 @@ void BPlusTree::remove(float key)
         // Save current node to disk.
         Address cursorAddress = {cursorDiskAddress, 0};
         index->saveToDisk(cursor, nodeSize, cursorAddress);
-        return;
+
+        // update numNodes and numNodesDeleted after deletion
+        int numNodesDeleted = numNodes - index->getAllocated();
+        return numNodesDeleted;        
       }
     }
 
@@ -312,8 +328,8 @@ void BPlusTree::remove(float key)
   }
 
   // update numNodes and numNodesDeleted after deletion
-  numNodesDeleted = numNodes - index->getAllocated();
-  numNodes = index->getAllocated();
+  int numNodesDeleted = numNodes - index->getAllocated();
+  return numNodesDeleted;
 }
 
 
@@ -646,7 +662,7 @@ void BPlusTree::removeLL(Address LLHeadAddress)
   // End of linked list
   if (head->pointers[head->numKeys].blockAddress == nullptr)
   {
-    std::cout << "End of linked list";
+    std::cout << "End of linked list" << endl;
     return;
   }
 

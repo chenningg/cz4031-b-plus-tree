@@ -1,0 +1,9 @@
+=====================================Experiment 3==========================================
+Retrieving the attribute tconst of those movies with averageRating equal to 8...
+Number and content of index blocks the process accesses: 1756
+Number and content of record blocks the process accesses: 500
+Attribute tconst of the records that are returned   : 
+
+tconst for average rating: 8 > tt0000738 | x | x | x | x | x | x | End of linked list
+
+No more records found for range 8 to 8

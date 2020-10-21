@@ -20,8 +20,6 @@ Node::Node(int maxKeys)
 
   for (int i = 0; i < maxKeys + 1; i++)
   {
-    // Address nullAddress{NULL, 0};
-    // pointers[i] = nullAddress;
     Address nullAddress{(void *)myNullPtr, 0};
     pointers[i] = nullAddress;
   }
@@ -62,7 +60,6 @@ BPlusTree::BPlusTree(std::size_t blockSize, MemoryPool *disk, MemoryPool *index)
   // Initialize initial variables
   levels = 0;
   numNodes = 0;
-  numNodesDeleted = 0;
 
   // Initialize disk space for index and set reference to disk.
   
