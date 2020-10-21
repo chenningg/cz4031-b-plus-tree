@@ -39,9 +39,7 @@ bool MemoryPool::allocateBlock()
     sizeUsed += blockSize;
     block = (char *)pool + allocated * blockSize; // Set current block pointer to new block.
     blockSizeUsed = 0;                    // Reset offset to 0.
-
     allocated += 1;
-
     return true;
   }
   else
@@ -102,7 +100,7 @@ bool MemoryPool::deallocate(Address address, std::size_t sizeToDelete)
     if (memcmp(testBlock, address.blockAddress, blockSize) == 0)
     {
       sizeUsed -= blockSize;
-      allocated -= 1;
+      allocated--;
     }
 
     return true;

@@ -70,3 +70,28 @@ Node *BPlusTree::findParent(Node *cursorDiskAddress, Node *childDiskAddress, flo
   // If we reach here, means cannot find already.
   return nullptr;
 }
+
+
+int BPlusTree::getLevels() {
+
+  if (rootAddress == nullptr) {
+    return 0;
+  }
+
+  // Load in the root node from disk
+  Address rootDiskAddress{rootAddress, 0};
+  root = (Node *)index->loadFromDisk(rootDiskAddress, nodeSize);
+  Node *cursor = root;
+
+  levels = 1;
+
+  while (!cursor->isLeaf) {
+    cursor = (Node *)index->loadFromDisk(cursor->pointers[0], nodeSize);
+    levels++;
+  }
+
+  // Account for linked list (count as one level)
+  levels++;
+
+  return levels;
+}
