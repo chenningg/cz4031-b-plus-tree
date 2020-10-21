@@ -44,6 +44,9 @@ private:
   // Updates the parent node to point at both child nodes, and adds a parent node if needed.
   void insertInternal(float key, Node *cursorDiskAddress, Node *childDiskAddress);
 
+  // Helper function for deleting records.
+  void removeInternal(float key, Node *cursorDiskAddress, Node *childDiskAddress);
+
   // Finds the direct parent of a node in the B+ Tree.
   // Takes in root and a node to find parent for, returns parent's disk address.
   Node *findParent(Node *, Node *, float lowerBoundKey);
@@ -75,7 +78,13 @@ public:
   // Prints out an entire linked list's records.
   void displayLL(Address LLHeadAddress);
 
-  // Deletes
+  // Remove a range of records from the disk (and B+ Tree).
+  // Accepts a key to delete.
+  void remove(float key);
+
+  // Remove an entire linked list from the start to the end for a given linked list head
+  // No need to know they key since they are all the same
+  void removeLL(Address LLHeadAddress);
 
   // Getters and setters
 

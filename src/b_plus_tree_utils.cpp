@@ -229,6 +229,10 @@ void BPlusTree::insertInternal(float key, Node *cursorDiskAddress, Node *childDi
   }
 }
 
+void BPlusTree::removeInternal(float key, Node *cursorDiskAddress, Node *childDiskAddress)
+{
+}
+
 // Find the parent of a node.
 Node *BPlusTree::findParent(Node *cursorDiskAddress, Node *childDiskAddress, float lowerBoundKey)
 {

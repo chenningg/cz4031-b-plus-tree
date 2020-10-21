@@ -25,7 +25,7 @@ public:
   Address allocate(std::size_t sizeRequired);
 
   // Deallocates an existing record and block if block becomes empty. Returns false if error.
-  bool deallocate(void *blockAddress, short int offset, std::size_t sizeToDelete);
+  bool deallocate(Address address, std::size_t sizeToDelete);
 
   // Give a block address, offset and size, returns the data there.
   void *loadFromDisk(Address address, std::size_t size);
