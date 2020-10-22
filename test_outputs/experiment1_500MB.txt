@@ -1,17 +1,3 @@
-creating the disk on the stack for records, index
-Max keys for a B+ tree node: 40
-Number of record blocks accessed in search operation reset to: 0
-Number of index blocks accessed in search operation reset to: 0
-Reading in test data ... 
-=====================================Experiment 1==========================================
-Number of records per record block --- 25
-Number of keys per index block --- 40
-Number of record blocks --- 20
-Number of index blocks --- 53
-Size of actual record data stored --- 10000
-Size of actual index data stored --- 26500
-Size of record blocks --- 10000
-Size of index blocks --- 26500
-Total number of blocks   : 73
-Actual size of database : 36500
-Size of database (size of all blocks): 36500
+version https://git-lfs.github.com/spec/v1
+oid sha256:11e6a86e35cb374320273b5a6311c3e4d0cae08ece2ab5c776b1218613cf56ac
+size 727
