@@ -14,39 +14,38 @@ using namespace std;
 
 int main()
 {
-  int BLOCKSIZE=0;
-  std::cout <<"=========================================================================================="<<endl;
-  std::cout <<"Select Block size:           "<<endl;
+  int BLOCKSIZE = 0;
+  std::cout << "==========================================================================================" << endl;
+  std::cout << "Select Block size:           " << endl;
 
   int choice = 0;
-  while (choice != 1 && choice != 2){
-    std::cout << "Enter a choice: " <<endl;
-    std::cout << "1. 100 B " <<endl;
-    std::cout << "2. 500 B" <<endl;
+  while (choice != 1 && choice != 2)
+  {
+    std::cout << "Enter a choice: " << endl;
+    std::cout << "1. 100 B " << endl;
+    std::cout << "2. 500 B" << endl;
     cin >> choice;
     if (int(choice) == 1)
     {
       BLOCKSIZE = int(100);
-    } 
+    }
     else if (int(choice) == 2)
     {
       BLOCKSIZE = int(500);
     }
-    else 
+    else
     {
       cin.clear();
-      std::cout << "Invalid input, input either 1 or 2" <<endl;
+      std::cout << "Invalid input, input either 1 or 2" << endl;
     }
   }
 
-
-  // create the stream redirection stuff 
+  // create the stream redirection stuff
   streambuf *coutbuf = std::cout.rdbuf(); //save old buffer
-
 
   // save experiment1 logging
   ofstream out1("../outputs_test/experiment1_" + to_string(BLOCKSIZE) + "MB.txt");
-  std::cout.rdbuf(out1.rdbuf());           //redirect std::cout to filename.txt!
+  std::cout.rdbuf(out1.rdbuf()); //redirect std::cout to filename.txt!
 
   /*
   =============================================================
@@ -63,7 +62,7 @@ int main()
   MemoryPool disk(150000000, BLOCKSIZE);  // 150MB
   MemoryPool index(350000000, BLOCKSIZE); // 350MB
 
-  // Creating the tree 
+  // Creating the tree
   BPlusTree tree = BPlusTree(BLOCKSIZE, &disk, &index);
   std::cout << "Max keys for a B+ tree node: " << tree.getMaxKeys() << endl;
 
@@ -71,14 +70,12 @@ int main()
   disk.resetBlocksAccessed();
   index.resetBlocksAccessed();
   std::cout << "Number of record blocks accessed in search operation reset to: 0" << endl;
-  std::cout << "Number of index blocks accessed in search operation reset to: 0" << endl;    
-
+  std::cout << "Number of index blocks accessed in search operation reset to: 0" << endl;
 
   // Open test data
-  std::cout <<"Reading in data ... "<<endl;
+  std::cout << "Reading in data ... " << endl;
   std::ifstream file("../data/data.tsv"); // actual data
   // std::ifstream file("../data/testdata.tsv"); // testing data
-  
 
   // Insert data into database and populate list of addresses
   if (file.is_open())
@@ -106,6 +103,7 @@ int main()
       //build the bplustree as we insert records
       tree.insert(tempAddress, float(temp.averageRating));
 
+      std::cerr << "Inserting: " << temp.tconst << temp.averageRating << temp.numVotes << endl;
       //logging
       // cout << "Inserted record " << recordNum + 1 << " at block address: " << &tempAddress.blockAddress << " and offset " << &tempAddress.offset << endl;
       recordNum += 1;
@@ -114,7 +112,7 @@ int main()
   }
 
   // call experiment 1
-  std::cout <<"=====================================Experiment 1=========================================="<<endl;
+  std::cout << "=====================================Experiment 1==========================================" << endl;
   std::cout << "Number of records per record block --- " << BLOCKSIZE / sizeof(Record) << endl;
   std::cout << "Number of keys per index block --- " << tree.getMaxKeys() << endl;
   std::cout << "Number of record blocks --- " << disk.getAllocated() << endl;
@@ -123,17 +121,16 @@ int main()
   std::cout << "Size of actual index data stored --- " << index.getActualSizeUsed() << endl;
   std::cout << "Size of record blocks --- " << disk.getSizeUsed() << endl;
   std::cout << "Size of index blocks --- " << index.getSizeUsed() << endl;
-  std::cout <<"Total number of blocks   : "<<disk.getAllocated() + index.getAllocated()<<endl;
-  std::cout <<"Actual size of database : "<<disk.getActualSizeUsed() + index.getActualSizeUsed()<<endl;
-  std::cout <<"Size of database (size of all blocks): "<<disk.getSizeUsed()+index.getSizeUsed()<<endl;
-  
+  std::cout << "Total number of blocks   : " << disk.getAllocated() + index.getAllocated() << endl;
+  std::cout << "Actual size of database : " << disk.getActualSizeUsed() + index.getActualSizeUsed() << endl;
+  std::cout << "Size of database (size of all blocks): " << disk.getSizeUsed() + index.getSizeUsed() << endl;
+
   // finish saving experiment1 logging
   std::cout.rdbuf(coutbuf); //reset to standard output again
-  
+
   // reset counts for next part
   index.resetBlocksAccessed();
   disk.resetBlocksAccessed();
-
 
   /*
   =============================================================
@@ -146,20 +143,18 @@ int main()
   =============================================================
   */
 
-
   // save experiment2 logging
   ofstream out2("../outputs_test/experiment2_" + to_string(BLOCKSIZE) + "MB.txt");
-  std::cout.rdbuf(out2.rdbuf());           //redirect std::cout to filename.txt!
+  std::cout.rdbuf(out2.rdbuf()); //redirect std::cout to filename.txt!
 
   // call experiment 2
-  std::cout <<"=====================================Experiment 2=========================================="<<endl;
-  std::cout <<"Parameter n of the B+ tree    : "<<tree.getMaxKeys()<<endl;
-  std::cout <<"Number of nodes of the B+ tree: "<<tree.getNumNodes()<<endl;
-  std::cout <<"Height of the B+ tree         : "<<tree.getLevels()<<endl;
-  std::cout << "Root nodes and child nodes :"<<endl;
-  tree.display(tree.getRoot(),1);
-  std::cout <<endl;
-
+  std::cout << "=====================================Experiment 2==========================================" << endl;
+  std::cout << "Parameter n of the B+ tree    : " << tree.getMaxKeys() << endl;
+  std::cout << "Number of nodes of the B+ tree: " << tree.getNumNodes() << endl;
+  std::cout << "Height of the B+ tree         : " << tree.getLevels() << endl;
+  std::cout << "Root nodes and child nodes :" << endl;
+  tree.display(tree.getRoot(), 1);
+  std::cout << endl;
 
   // finish saving experiment2 logging
   std::cout.rdbuf(coutbuf); //reset to standard output again
@@ -167,7 +162,6 @@ int main()
   // reset counts for next part
   index.resetBlocksAccessed();
   disk.resetBlocksAccessed();
-
 
   /*
   =============================================================
@@ -181,22 +175,20 @@ int main()
 
   // save experiment3 logging
   ofstream out3("../outputs_test/experiment3_" + to_string(BLOCKSIZE) + "MB.txt");
-  std::cout.rdbuf(out3.rdbuf());           //redirect std::cout to filename.txt!
+  std::cout.rdbuf(out3.rdbuf()); //redirect std::cout to filename.txt!
 
   // call experiment 3
-  std::cout <<"=====================================Experiment 3=========================================="<<endl;
-  std::cout <<"Retrieving the attribute tconst of those movies with averageRating equal to 8..."<<endl;     
-  tree.search(8.0,8.0);
+  std::cout << "=====================================Experiment 3==========================================" << endl;
+  std::cout << "Retrieving the attribute tconst of those movies with averageRating equal to 8..." << endl;
+  tree.search(8.0, 8.0);
   std::cout << endl;
-  std::cout <<"Number of index blocks the process accesses: "<<index.resetBlocksAccessed()<<endl; 
-  std::cout <<"Number of record blocks the process accesses: "<<disk.resetBlocksAccessed()<<endl;
+  std::cout << "Number of index blocks the process accesses: " << index.resetBlocksAccessed() << endl;
+  std::cout << "Number of record blocks the process accesses: " << disk.resetBlocksAccessed() << endl;
   std::cout << "\nNo more records found for range " << 8.0 << " to " << 8.0 << endl;
-  
-  // finish saving experiment3 logging
-  std::cout.rdbuf(coutbuf); //reset to standard output again        
-  
 
-  
+  // finish saving experiment3 logging
+  std::cout.rdbuf(coutbuf); //reset to standard output again
+
   /*
   =============================================================
   Experiment 4:
@@ -210,16 +202,15 @@ int main()
 
   // save experiment4 logging
   ofstream out4("../outputs_test/experiment4_" + to_string(BLOCKSIZE) + "MB.txt");
-  std::cout.rdbuf(out4.rdbuf());           //redirect std::cout to filename.txt!
+  std::cout.rdbuf(out4.rdbuf()); //redirect std::cout to filename.txt!
 
   // call experiment 4
-  std::cout <<"=====================================Experiment 4=========================================="<<endl;
-  std::cout <<"Retrieving the attribute tconst of those movies with averageRating from 7 to 9 (inclusively)..."<<endl;
-  tree.search(7,9);
+  std::cout << "=====================================Experiment 4==========================================" << endl;
+  std::cout << "Retrieving the attribute tconst of those movies with averageRating from 7 to 9 (inclusively)..." << endl;
+  tree.search(7, 9);
   std::cout << endl;
-  std::cout <<"Number of index blocks the process accesses: "<<index.resetBlocksAccessed()<<endl; 
-  std::cout <<"Number of data blocks the process accesses: "<<disk.resetBlocksAccessed()<<endl;
-  
+  std::cout << "Number of index blocks the process accesses: " << index.resetBlocksAccessed() << endl;
+  std::cout << "Number of data blocks the process accesses: " << disk.resetBlocksAccessed() << endl;
 
   // finish saving experiment4 logging
   std::cout.rdbuf(coutbuf); //reset to standard output again
@@ -238,16 +229,16 @@ int main()
 
   // save experiment5 logging
   ofstream out5("../outputs_test/experiment5_" + to_string(BLOCKSIZE) + "MB.txt");
-  std::cout.rdbuf(out5.rdbuf());           //redirect std::cout to filename.txt!
+  std::cout.rdbuf(out5.rdbuf()); //redirect std::cout to filename.txt!
 
   // call experiment 5
-  std::cout <<"=====================================Experiment 5=========================================="<<endl;
-  std::cout<<"Deleting those movies with the attribute averageRating equal to 7...\n";
-  
+  std::cout << "=====================================Experiment 5==========================================" << endl;
+  std::cout << "Deleting those movies with the attribute averageRating equal to 7...\n";
+
   int nodesDeleted = tree.remove(7.0);
 
   std::cout << "B+ Tree after deletion" << endl;
-  std::cout <<"Number of times that a node is deleted (or two nodes are merged): "<< nodesDeleted << endl; 
+  std::cout << "Number of times that a node is deleted (or two nodes are merged): " << nodesDeleted << endl;
   std::cout << "Number of nodes in updated B+ Tree --- " << tree.getNumNodes() << endl;
   std::cout << "Height of updated B+ tree --- " << tree.getLevels() << endl;
   std::cout << endl;
@@ -259,8 +250,7 @@ int main()
 
   // reset counts for next part
   index.resetBlocksAccessed();
-  disk.resetBlocksAccessed(); 
-  
+  disk.resetBlocksAccessed();
 
   std::cerr << "\n\n================================================================================================================" << endl;
   std::cerr << "Output saved to ../outputs_test folder. Please check there " << endl;
@@ -270,12 +260,3 @@ int main()
 
   return 0;
 }
-
-
-
-
-
-
-
-
-
