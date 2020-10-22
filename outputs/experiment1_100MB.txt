@@ -1,5 +1,0 @@
-creating the disk on the stack for records, index
-Max keys for a B+ tree node: 7
-Number of record blocks accessed in search operation reset to: 0
-Number of index blocks accessed in search operation reset to: 0
-Reading in test data ... 
