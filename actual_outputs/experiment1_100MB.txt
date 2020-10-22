@@ -1,0 +1,17 @@
+creating the disk on the stack for records, index
+Max keys for a B+ tree node: 3
+Number of record blocks accessed in search operation reset to: 0
+Number of index blocks accessed in search operation reset to: 0
+Reading in test data ... 
+=====================================Experiment 1==========================================
+Number of records per record block --- 5
+Number of keys per index block --- 3
+Number of record blocks --- 214064
+Number of index blocks --- 356966
+Size of actual record data stored --- 21406360
+Size of actual index data stored --- 35696600
+Size of record blocks --- 21406400
+Size of index blocks --- 35696600
+Total number of blocks   : 571030
+Actual size of database : 57102960
+Size of database (size of all blocks): 57103000

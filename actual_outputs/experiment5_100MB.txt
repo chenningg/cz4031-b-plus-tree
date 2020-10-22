@@ -1,0 +1,137 @@
+=====================================Experiment 5==========================================
+Deleting those movies with the attribute averageRating equal to 7...
+End of linked listSuccessfully deleted 7
+B+ Tree after deletion
+Number of times that a node is deleted (or two nodes are merged): 12209
+Number of nodes in updated B+ Tree --- 356966
+Height of updated B+ tree --- 7
+
+    level 1: |0x7fd22e405f50 | 6.2 | 0x7fd22e42ddfc| x |  Null  | x |  Null  |
+       level 2: |0x7fd22e4010cc | 5.6 | 0x7fd22e41bbc0 | 5.9 | 0x7fd22e40f80c| x |  Null  |
+          level 3: |0x7fd22e400708 | 3.4 | 0x7fd22e4214d0 | 4.2 | 0x7fd22e414118| x |  Null  |
+             level 4: |0x7fd22e400258 | 1.7 | 0x7fd22e4b4dc0 | 2.1 | 0x7fd22e425fd0 | 2.7 | 0x7fd22e41c3f4|
+                level 5: |0x7fd22e400064 | 1.3 | 0x7fd22e419a8c | 1.5 | 0x7fd22e44dfa8| x |  Null  |
+                   level 6: |0x7fd230608990 | 1 | 0x7fd230601528 | 1.1 | 0x7fd2305bc540 | 1.2 | 0x7fd22e419a8c|
+                   level 6: |0x7fd2305c7760 | 1.3 | 0x7fd2305e295c | 1.4 | 0x7fd22e44dfa8| x |  Null  |
+                   level 6: |0x7fd2305eb020 | 1.5 | 0x7fd230605ca4 | 1.6 | 0x7fd22e42dc6c| x |  Null  |
+                level 5: |0x7fd22e41db00 | 1.9 | 0x7fd22e4b4d5c| x |  Null  | x |  Null  |
+                   level 6: |0x7fd2305ba9e8 | 1.7 | 0x7fd2305bf100 | 1.8 | 0x7fd22e4b4d5c| x |  Null  |
+                   level 6: |0x7fd2305fc76c | 1.9 | 0x7fd2305f811c | 2 | 0x7fd22e4288d4| x |  Null  |
+                level 5: |0x7fd22e4233ac | 2.3 | 0x7fd22e429c5c | 2.5 | 0x7fd22e425f6c| x |  Null  |
+                   level 6: |0x7fd2305b5650 | 2.1 | 0x7fd2305f8e64 | 2.2 | 0x7fd22e429c5c| x |  Null  |
+                   level 6: |0x7fd2305ff32c | 2.3 | 0x7fd230602b08 | 2.4 | 0x7fd22e425f6c| x |  Null  |
+                   level 6: |0x7fd2305fc578 | 2.5 | 0x7fd2305f730c | 2.6 | 0x7fd22e41c390| x |  Null  |
+                level 5: |0x7fd22e412048 | 2.7 | 0x7fd22e41c264 | 2.9 | 0x7fd22e425a58 | 3.1 | 0x7fd22e430bb0|
+                   level 6: |0x7fd22e41f914 | 2.1 | 0x7fd22e4213a4 | 2.2 | 0x7fd22e421408| x |  Null  |
+                   level 6: |0x7fd2306083b4 | 2.7 | 0x7fd230604ca0 | 2.8 | 0x7fd22e425a58| x |  Null  |
+                   level 6: |0x7fd2305ff520 | 2.9 | 0x7fd230607f68 | 3 | 0x7fd22e430bb0| x |  Null  |
+                   level 6: |0x7fd2305fd450 | 3.1 | 0x7fd230607b80 | 3.2 | 0x7fd2305f6ccc | 3.3 | 0x7fd22e41ba94|
+             level 4: |0x7fd22e416a1c | 3.4 | 0x7fd22e411300 | 4 | 0x7fd22e421e30| x |  Null  |
+                level 5: |0x7fd22e40efd8 | 3.1 | 0x7fd22e4161e8| x |  Null  | x |  Null  |
+                   level 6: |0x7fd22e408e30 | 2.9 | 0x7fd22e40e808 | 3 | 0x7fd22e4161e8| x |  Null  |
+                   level 6: |0x7fd22e40f35c | 3.1 | 0x7fd22e424798 | 3.2 | 0x7fd22e427100 | 3.3 | 0x7fd22e40d994|
+                level 5: |0x7fd22e40814c | 3.4 | 0x7fd22e410cc0 | 3.6 | 0x7fd22e415374 | 3.8 | 0x7fd22e428618|
+                   level 6: |0x7fd22e41223c | 3.2 | 0x7fd22e40fd20 | 3.3 | 0x7fd22e410cc0| x |  Null  |
+                   level 6: |0x7fd23060397c | 3.4 | 0x7fd2305fc384 | 3.5 | 0x7fd22e415374| x |  Null  |
+                   level 6: |0x7fd23060ad80 | 3.6 | 0x7fd230607090 | 3.7 | 0x7fd22e428618| x |  Null  |
+                   level 6: |0x7fd230604c3c | 3.8 | 0x7fd230604408 | 3.9 | 0x7fd22e4246d0| x |  Null  |
+                level 5: |0x7fd22e421dcc | 4 | 0x7fd22e41d010| x |  Null  | x |  Null  |
+                   level 6: |0x7fd24f812304 | 3.9 | 0x7fd22e421d68 | 3.8 | 0x7fd22e420e2c | 3.9 | 0x7fd22e41d010|
+                   level 6: |0x7fd23060a484 | 4 | 0x7fd23060aeac | 4.1 | 0x7fd22e405140| x |  Null  |
+             level 4: |0x7fd22e4092e0 | 4.2 | 0x7fd22e4051a4 | 4.7 | 0x7fd22e42e054| x |  Null  |
+                level 5: |0x7fd22e401a2c | 3.8 | 0x7fd22e408854 | 4 | 0x7fd22e409920| x |  Null  |
+                   level 6: |0x7fd22e407c9c | 3.6 | 0x7fd22e40dea8 | 3.7 | 0x7fd22e408854| x |  Null  |
+                   level 6: |0x7fd22e41b198 | 3.8 | 0x7fd22e413ba0 | 3.9 | 0x7fd22e409920| x |  Null  |
+                   level 6: |0x7fd22e41b2c4 | 4 | 0x7fd22e4195dc | 4.1 | 0x7fd22e408598| x |  Null  |
+                level 5: |0x7fd22e40157c | 4.2 | 0x7fd22e404a9c | 4.4 | 0x7fd22e40fac8| x |  Null  |
+                   level 6: |0x7fd22e407918 | 4 | 0x7fd22e406c98 | 4.1 | 0x7fd22e404a9c| x |  Null  |
+                   level 6: |0x7fd23060a678 | 4.2 | 0x7fd230604f5c | 4.3 | 0x7fd22e40fac8| x |  Null  |
+                   level 6: |0x7fd230600588 | 4.4 | 0x7fd23060540c | 4.5 | 0x7fd2306037ec | 4.6 | 0x7fd22e40fcbc|
+                level 5: |0x7fd22e40fcbc | 4.9 | 0x7fd22e42dff0 | 5.2 | 0x7fd22e42e7c0 | 5.4 | 0x7fd22e42e694|
+                   level 6: |0x7fd230602914 | 4.7 | 0x7fd23060a614 | 4.8 | 0x7fd22e42dff0| x |  Null  |
+                   level 6: |0x7fd2306012d0 | 4.9 | 0x7fd230608f6c | 5 | 0x7fd230608288 | 5.1 | 0x7fd22e42e7c0|
+                   level 6: |0x7fd23060a09c | 5.2 | 0x7fd230607ab8 | 5.3 | 0x7fd22e42e694| x |  Null  |
+                   level 6: |0x7fd23060a038 | 5.4 | 0x7fd23060af10 | 5.5 | 0x7fd22e402cec| x |  Null  |
+          level 3: |0x7fd22e408660 | 5.6 | 0x7fd22e404650| x |  Null  | x |  Null  |
+             level 4: |0x7fd22e401e78 | 5 | 0x7fd22e401388| x |  Null  | x |  Null  |
+                level 5: |0x7fd22e401e14 | 4.5 | 0x7fd22e400e10 | 4.7 | 0x7fd22e401fa4| x |  Null  |
+                   level 6: |0x7fd22e4014b4 | 4.2 | 0x7fd22e401db0 | 4.3 | 0x7fd22e401324| x |  Null  |
+                   level 6: |0x7fd22e40db88 | 4.5 | 0x7fd22e40e09c | 4.6 | 0x7fd22e401fa4| x |  Null  |
+                   level 6: |0x7fd22e40f488 | 4.7 | 0x7fd22e40dbec | 4.8 | 0x7fd22e40ecb8 | 4.9 | 0x7fd22e40125c|
+                level 5: |0x7fd22e40125c | 5 | 0x7fd22e400af0 | 5.3 | 0x7fd22e4021fc| x |  Null  |
+                   level 6: |0x7fd22e400e74 | 4.7 | 0x7fd22e4011f8 | 4.8 | 0x7fd22e4013ec | 4.9 | 0x7fd22e400af0|
+                   level 6: |0x7fd22e42d244 | 5 | 0x7fd22e42d6f4 | 5.1 | 0x7fd22e42c1dc | 5.2 | 0x7fd22e4021fc|
+                   level 6: |0x7fd22e42d49c | 5.3 | 0x7fd22e42b9a8 | 5.4 | 0x7fd22e42c948 | 5.5 | 0x7fd22e400c80|
+             level 4: |0x7fd22e401388 | 5.6 | 0x7fd22e400ce4| x |  Null  | x |  Null  |
+                level 5: |0x7fd22e40125c | 5 | 0x7fd22e400af0 | 5.3 | 0x7fd22e4021fc| x |  Null  |
+                   level 6: |0x7fd22e400e74 | 4.7 | 0x7fd22e4011f8 | 4.8 | 0x7fd22e4013ec | 4.9 | 0x7fd22e400af0|
+                   level 6: |0x7fd22e42d244 | 5 | 0x7fd22e42d6f4 | 5.1 | 0x7fd22e42c1dc | 5.2 | 0x7fd22e4021fc|
+                   level 6: |0x7fd22e42d49c | 5.3 | 0x7fd22e42b9a8 | 5.4 | 0x7fd22e42c948 | 5.5 | 0x7fd22e400c80|
+                level 5: |0x7fd22e400578 | 5.6 | 0x7fd22e400384| x |  Null  | x |  Null  |
+                   level 6: |0x7fd22e4003e8 | 5.4 | 0x7fd22e400320 | 5.5 | 0x7fd22e400384| x |  Null  |
+                   level 6: |0x7fd23060acb8 | 5.6 | 0x7fd230605e98 | 5.7 | 0x7fd230609548 | 5.8 | 0x7fd22e4007d0|
+          level 3: |0x7fd22e404650 | 5.9 | 0x7fd22e401900| x |  Null  | x |  Null  |
+             level 4: |0x7fd22e401388 | 5.6 | 0x7fd22e400ce4| x |  Null  | x |  Null  |
+                level 5: |0x7fd22e40125c | 5 | 0x7fd22e400af0 | 5.3 | 0x7fd22e4021fc| x |  Null  |
+                   level 6: |0x7fd22e400e74 | 4.7 | 0x7fd22e4011f8 | 4.8 | 0x7fd22e4013ec | 4.9 | 0x7fd22e400af0|
+                   level 6: |0x7fd22e42d244 | 5 | 0x7fd22e42d6f4 | 5.1 | 0x7fd22e42c1dc | 5.2 | 0x7fd22e4021fc|
+                   level 6: |0x7fd22e42d49c | 5.3 | 0x7fd22e42b9a8 | 5.4 | 0x7fd22e42c948 | 5.5 | 0x7fd22e400c80|
+                level 5: |0x7fd22e400578 | 5.6 | 0x7fd22e400384| x |  Null  | x |  Null  |
+                   level 6: |0x7fd22e4003e8 | 5.4 | 0x7fd22e400320 | 5.5 | 0x7fd22e400384| x |  Null  |
+                   level 6: |0x7fd23060acb8 | 5.6 | 0x7fd230605e98 | 5.7 | 0x7fd230609548 | 5.8 | 0x7fd22e4007d0|
+             level 4: |0x7fd22e400ce4 | 5.9 | 0x7fd22e4009c4| x |  Null  | x |  Null  |
+                level 5: |0x7fd22e400578 | 5.6 | 0x7fd22e400384| x |  Null  | x |  Null  |
+                   level 6: |0x7fd22e4003e8 | 5.4 | 0x7fd22e400320 | 5.5 | 0x7fd22e400384| x |  Null  |
+                   level 6: |0x7fd23060acb8 | 5.6 | 0x7fd230605e98 | 5.7 | 0x7fd230609548 | 5.8 | 0x7fd22e4007d0|
+                level 5: |0x7fd22e400384 | 5.9 | 0x7fd22e4007d0| x |  Null  | x |  Null  |
+                   level 6: |0x7fd23060acb8 | 5.6 | 0x7fd230605e98 | 5.7 | 0x7fd230609548 | 5.8 | 0x7fd22e4007d0|
+                   level 6: |0x7fd2306064d8 | 5.9 | 0x7fd23060a8d0 | 6 | 0x7fd2306098cc | 6.1 | 0x7fd22e4001f4|
+       level 2: |0x7fd22e40f80c | 6.2 | 0x7fd22e405eec| x |  Null  | x |  Null  |
+          level 3: |0x7fd22e404650 | 5.9 | 0x7fd22e401900| x |  Null  | x |  Null  |
+             level 4: |0x7fd22e401388 | 5.6 | 0x7fd22e400ce4| x |  Null  | x |  Null  |
+                level 5: |0x7fd22e40125c | 5 | 0x7fd22e400af0 | 5.3 | 0x7fd22e4021fc| x |  Null  |
+                   level 6: |0x7fd22e400e74 | 4.7 | 0x7fd22e4011f8 | 4.8 | 0x7fd22e4013ec | 4.9 | 0x7fd22e400af0|
+                   level 6: |0x7fd22e42d244 | 5 | 0x7fd22e42d6f4 | 5.1 | 0x7fd22e42c1dc | 5.2 | 0x7fd22e4021fc|
+                   level 6: |0x7fd22e42d49c | 5.3 | 0x7fd22e42b9a8 | 5.4 | 0x7fd22e42c948 | 5.5 | 0x7fd22e400c80|
+                level 5: |0x7fd22e400578 | 5.6 | 0x7fd22e400384| x |  Null  | x |  Null  |
+                   level 6: |0x7fd22e4003e8 | 5.4 | 0x7fd22e400320 | 5.5 | 0x7fd22e400384| x |  Null  |
+                   level 6: |0x7fd23060acb8 | 5.6 | 0x7fd230605e98 | 5.7 | 0x7fd230609548 | 5.8 | 0x7fd22e4007d0|
+             level 4: |0x7fd22e400ce4 | 5.9 | 0x7fd22e4009c4| x |  Null  | x |  Null  |
+                level 5: |0x7fd22e400578 | 5.6 | 0x7fd22e400384| x |  Null  | x |  Null  |
+                   level 6: |0x7fd22e4003e8 | 5.4 | 0x7fd22e400320 | 5.5 | 0x7fd22e400384| x |  Null  |
+                   level 6: |0x7fd23060acb8 | 5.6 | 0x7fd230605e98 | 5.7 | 0x7fd230609548 | 5.8 | 0x7fd22e4007d0|
+                level 5: |0x7fd22e400384 | 5.9 | 0x7fd22e4007d0| x |  Null  | x |  Null  |
+                   level 6: |0x7fd23060acb8 | 5.6 | 0x7fd230605e98 | 5.7 | 0x7fd230609548 | 5.8 | 0x7fd22e4007d0|
+                   level 6: |0x7fd2306064d8 | 5.9 | 0x7fd23060a8d0 | 6 | 0x7fd2306098cc | 6.1 | 0x7fd22e4001f4|
+          level 3: |0x7fd22e401068 | 7.4 | 0x7fd22e405e88| x |  Null  | x |  Null  |
+             level 4: |0x7fd22e4009c4 | 6.2 | 0x7fd22e4006a4 | 7.2 | 0x7fd22e4049d4| x |  Null  |
+                level 5: |0x7fd22e400384 | 5.9 | 0x7fd22e4007d0| x |  Null  | x |  Null  |
+                   level 6: |0x7fd23060acb8 | 5.6 | 0x7fd230605e98 | 5.7 | 0x7fd230609548 | 5.8 | 0x7fd22e4007d0|
+                   level 6: |0x7fd2306064d8 | 5.9 | 0x7fd23060a8d0 | 6 | 0x7fd2306098cc | 6.1 | 0x7fd22e4001f4|
+                level 5: |0x7fd22e4001f4 | 6.5 | 0x7fd22e401bbc | 6.7 | 0x7fd22e405910 | 6.9 | 0x7fd22e400640|
+                   level 6: |0x7fd230608a58 | 6.2 | 0x7fd230608be8 | 6.3 | 0x7fd230609f0c | 6.4 | 0x7fd22e401bbc|
+                   level 6: |0x7fd2306099f8 | 6.5 | 0x7fd23060af74 | 6.6 | 0x7fd22e405910| x |  Null  |
+                   level 6: |0x7fd230609de0 | 6.7 | 0x7fd23060a6dc | 6.8 | 0x7fd22e404970| x |  Null  |
+                   level 6: |0x7fd23060a808 | 6.9 | 0x7fd23060ad1c | 7.1 | 0x7fd22e4039d0 | 0 |  Null |
+                level 5: |0x7fd22e400640 | 7.2 | 0x7fd22e4039d0| x |  Null  | x |  Null  |
+                   level 6: |0x7fd23060a808 | 6.9 | 0x7fd23060ad1c | 7.1 | 0x7fd22e4039d0 | 0 |  Null |
+                   level 6: |0x7fd23060a420 | 7.2 | 0x7fd23060ac54 | 7.3 | 0x7fd22e401770| x |  Null  |
+             level 4: |0x7fd22e402774 | 8.1 | 0x7fd22e405e24 | 8.6 | 0x7fd22e40b8c4 | 9.3 | 0x7fd22e497c20|
+                level 5: |0x7fd22e400640 | 7.4 | 0x7fd22e401770 | 7.6 | 0x7fd22e403c28 | 7.8 | 0x7fd22e40f8d4|
+                   level 6: |0x7fd23060a808 | 6.9 | 0x7fd23060ad1c | 7.1 | 0x7fd22e4039d0 | 0 |  Null |
+                   level 6: |0x7fd23060ade4 | 7.4 | 0x7fd23060a7a4 | 7.5 | 0x7fd22e403c28| x |  Null  |
+                   level 6: |0x7fd23060a5b0 | 7.6 | 0x7fd23060ab28 | 7.7 | 0x7fd22e40f8d4| x |  Null  |
+                   level 6: |0x7fd23060ab8c | 7.8 | 0x7fd23060aac4 | 7.9 | 0x7fd23060a9fc | 8 | 0x7fd22e405dc0|
+                level 5: |0x7fd22e405dc0 | 8.1 | 0x7fd22e405014 | 8.3 | 0x7fd22e408408| x |  Null  |
+                   level 6: |0x7fd22e405d5c | 7.9 | 0x7fd22e405b68 | 8 | 0x7fd22e405014| x |  Null  |
+                   level 6: |0x7fd23060aa60 | 8.1 | 0x7fd23060a740 | 8.2 | 0x7fd22e408408| x |  Null  |
+                   level 6: |0x7fd23060ae48 | 8.3 | 0x7fd23060a934 | 8.4 | 0x7fd2306096d8 | 8.5 | 0x7fd22e40abe0|
+                level 5: |0x7fd22e40abe0 | 8.9 | 0x7fd22e40b860 | 9.1 | 0x7fd22e415ec8| x |  Null  |
+                   level 6: |0x7fd230609c50 | 8.6 | 0x7fd23060abf0 | 8.7 | 0x7fd23060a86c | 8.8 | 0x7fd22e40b860|
+                   level 6: |0x7fd23060a998 | 8.9 | 0x7fd230609674 | 9 | 0x7fd22e415ec8| x |  Null  |
+                   level 6: |0x7fd230608224 | 9.1 | 0x7fd230603594 | 9.2 | 0x7fd22e41e2d0| x |  Null  |
+                level 5: |0x7fd22e41e2d0 | 9.6 | 0x7fd22e497bbc | 9.9 | 0x7fd22e52c12c| x |  Null  |
+                   level 6: |0x7fd230606dd4 | 9.3 | 0x7fd230606794 | 9.4 | 0x7fd230603724 | 9.5 | 0x7fd22e497bbc|
+                   level 6: |0x7fd230609cb4 | 9.6 | 0x7fd230608d78 | 9.7 | 0x7fd2306076d0 | 9.8 | 0x7fd22e52c12c|
+                   level 6: |0x7fd23060766c | 9.9 | 0x7fd23057a94c | 10 |  Null | x |  Null  |
+

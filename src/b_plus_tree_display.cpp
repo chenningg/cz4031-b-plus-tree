@@ -63,7 +63,7 @@ void BPlusTree::displayBlock(void *blockAddress)
 
     Record *record = (Record *)recordAddress;
 
-    std::cout << "[" << record->tconst << "|" << record->averageRating << "|" << record->numVotes << "]     ";
+    std::cout << "[" << record->tconst << "|" << record->averageRating << "|" << record->numVotes << "]  ";
     blockChar += sizeof(Record);
     i += sizeof(Record);
   }
