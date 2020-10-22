@@ -27,7 +27,7 @@ int BPlusTree::remove(float key)
     Node *parent;                          // Keep track of the parent as we go deeper into the tree in case we need to update it.
     void *parentDiskAddress = rootAddress; // Keep track of parent's disk address as well so we can update parent in disk.
     void *cursorDiskAddress = rootAddress; // Store current node's disk address in case we need to update it in disk.
-    int leftSibling, rightSibling;         // Index of left and right child to borrow from.
+    int leftSibling, rightSibling; // Index of left and right child to borrow from.
 
     // While not leaf, keep following the nodes to correct key.
     while (cursor->isLeaf == false)
@@ -113,7 +113,11 @@ int BPlusTree::remove(float key)
     }
 
     cursor->numKeys--;
-    
+
+    // // Change the key removed to empty float
+    // for (int i = cursor->numKeys; i < maxKeys; i++) {
+    //   cursor->keys[i] = float();
+    // }
 
     // Move the last pointer forward (if any).
     cursor->pointers[cursor->numKeys] = cursor->pointers[cursor->numKeys + 1];
@@ -147,6 +151,11 @@ int BPlusTree::remove(float key)
       // update numNodes and numNodesDeleted after deletion
       int numNodesDeleted = numNodes - index->getAllocated();
       numNodes = index->getAllocated();
+
+      // Save to disk.
+      Address cursorAddress = {cursorDiskAddress, 0};
+      index->saveToDisk(cursor, nodeSize, cursorAddress);
+      
       return numNodesDeleted;
     }
 
@@ -159,6 +168,11 @@ int BPlusTree::remove(float key)
       // update numNodes and numNodesDeleted after deletion
       int numNodesDeleted = numNodes - index->getAllocated();
       numNodes = index->getAllocated();
+
+      // Save to disk.
+      Address cursorAddress = {cursorDiskAddress, 0};
+      index->saveToDisk(cursor, nodeSize, cursorAddress);
+
       return numNodesDeleted;
     }
 

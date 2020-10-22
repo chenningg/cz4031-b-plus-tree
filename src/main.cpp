@@ -17,26 +17,31 @@ int main()
   int BLOCKSIZE=0;
   std::cout <<"=========================================================================================="<<endl;
   std::cout <<"Select Block size:           "<<endl;
-  int choice=0;
-  while(choice!= 1 && choice != 2){
-    std::cout <<"Enter a choice: "<<endl;
-    std::cout <<"1. 100 B "<<endl;
-    std::cout <<"2. 500 B"<<endl;
+
+  int choice = 0;
+  while (choice != 1 && choice != 2){
+    std::cout << "Enter a choice: " <<endl;
+    std::cout << "1. 100 B " <<endl;
+    std::cout << "2. 500 B" <<endl;
     cin >> choice;
-    if(int(choice) == 1){
+    if (int(choice) == 1)
+    {
       BLOCKSIZE = int(100);
-    }else if (int(choice) == 2){
+    } 
+    else if (int(choice) == 2)
+    {
       BLOCKSIZE = int(500);
-    }else{
-    cin.clear();
-    std::cout <<"Invalid input, input either 1 or 2"<<endl;
+    }
+    else 
+    {
+      cin.clear();
+      std::cout << "Invalid input, input either 1 or 2" <<endl;
     }
   }
 
 
   // create the stream redirection stuff 
   streambuf *coutbuf = std::cout.rdbuf(); //save old buffer
-
 
 
   // save experiment1 logging
@@ -53,11 +58,10 @@ int main()
   */
 
   // Create memory pools for the disk and the index, total 500MB
+  // The split is determined empirically. We split so that we can have a contiguous disk address space for records
   std::cout << "creating the disk on the stack for records, index" << endl;
-  // MemoryPool disk(100000, BLOCKSIZE);  
-  // MemoryPool index(100000, BLOCKSIZE);  
-  MemoryPool disk(150000000, BLOCKSIZE);  
-  MemoryPool index(350000000, BLOCKSIZE);
+  MemoryPool disk(150000000, BLOCKSIZE);  // 150MB
+  MemoryPool index(350000000, BLOCKSIZE); // 350MB
 
   // Creating the tree 
   BPlusTree tree = BPlusTree(BLOCKSIZE, &disk, &index);
@@ -72,8 +76,9 @@ int main()
 
   // Open test data
   std::cout <<"Reading in data ... "<<endl;
-  std::ifstream file("../data/testdata.tsv");
-  // std::ifstream file("../data/data.tsv");
+  std::ifstream file("../data/data.tsv"); // actual data
+  // std::ifstream file("../data/testdata.tsv"); // testing data
+  
 
   // Insert data into database and populate list of addresses
   if (file.is_open())
@@ -254,7 +259,8 @@ int main()
 
   // reset counts for next part
   index.resetBlocksAccessed();
-  disk.resetBlocksAccessed();
+  disk.resetBlocksAccessed(); 
+  
 
   std::cerr << "\n\n================================================================================================================" << endl;
   std::cerr << "Output saved to ../outputs_test folder. Please check there " << endl;
