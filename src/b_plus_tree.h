@@ -83,7 +83,6 @@ public:
   int remove(float key);
 
   // Remove an entire linked list from the start to the end for a given linked list head
-  // No need to know they key since they are all the same
   void removeLL(Address LLHeadAddress);
 
   // Getters and setters
@@ -97,7 +96,8 @@ public:
   // Returns the number of levels in this B+ Tree.
   int getLevels();
 
-  int getNumNodes() {
+  int getNumNodes()
+  {
     return numNodes;
   }
 
