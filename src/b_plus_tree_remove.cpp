@@ -96,6 +96,7 @@ int BPlusTree::remove(float key)
       
       // update numNodes and numNodesDeleted after deletion
       int numNodesDeleted = numNodes - index->getAllocated();
+      numNodes = index->getAllocated();
       return numNodesDeleted;
     }
 
