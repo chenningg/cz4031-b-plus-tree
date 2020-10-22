@@ -45,7 +45,7 @@ int main()
 
 
   // save experiment1 logging
-  ofstream out1("../outputs_test/experiment1_" + to_string(BLOCKSIZE) + "MB.txt");
+  ofstream out1("../outputs_actual/experiment1_" + to_string(BLOCKSIZE) + "MB.txt");
   std::cout.rdbuf(out1.rdbuf());           //redirect std::cout to filename.txt!
 
   /*
@@ -148,7 +148,7 @@ int main()
 
 
   // save experiment2 logging
-  ofstream out2("../outputs_test/experiment2_" + to_string(BLOCKSIZE) + "MB.txt");
+  ofstream out2("../outputs_actual/experiment2_" + to_string(BLOCKSIZE) + "MB.txt");
   std::cout.rdbuf(out2.rdbuf());           //redirect std::cout to filename.txt!
 
   // call experiment 2
@@ -180,7 +180,7 @@ int main()
   */
 
   // save experiment3 logging
-  ofstream out3("../outputs_test/experiment3_" + to_string(BLOCKSIZE) + "MB.txt");
+  ofstream out3("../outputs_actual/experiment3_" + to_string(BLOCKSIZE) + "MB.txt");
   std::cout.rdbuf(out3.rdbuf());           //redirect std::cout to filename.txt!
 
   // call experiment 3
@@ -209,7 +209,7 @@ int main()
   */
 
   // save experiment4 logging
-  ofstream out4("../outputs_test/experiment4_" + to_string(BLOCKSIZE) + "MB.txt");
+  ofstream out4("../outputs_actual/experiment4_" + to_string(BLOCKSIZE) + "MB.txt");
   std::cout.rdbuf(out4.rdbuf());           //redirect std::cout to filename.txt!
 
   // call experiment 4
@@ -237,7 +237,7 @@ int main()
   */
 
   // save experiment5 logging
-  ofstream out5("../outputs_test/experiment5_" + to_string(BLOCKSIZE) + "MB.txt");
+  ofstream out5("../outputs_actual/experiment5_" + to_string(BLOCKSIZE) + "MB.txt");
   std::cout.rdbuf(out5.rdbuf());           //redirect std::cout to filename.txt!
 
   // call experiment 5
@@ -263,7 +263,7 @@ int main()
   
 
   std::cerr << "\n\n================================================================================================================" << endl;
-  std::cerr << "Output saved to ../outputs_test folder. Please check there " << endl;
+  std::cerr << "Output saved to ../outputs_actual folder. Please check there " << endl;
   std::cerr << "Run again to get the results for your other choice " << endl;
   std::cerr << "Please refer to ../outputs_actual for our own copy of the results. Yours may differ based on system architecture " << endl;
   std::cerr << "================================================================================================================" << endl;
